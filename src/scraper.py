@@ -1,22 +1,28 @@
+import logging
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
+from src.logger import logger
+
 
 class ListingsScraper:
     """
     Class that scrapes listings for a release.
     """
-    def __init__(self):
-        self.base_url = "https://discogs.com/sell/release/"
+    def __init__(self, logger: logging.Logger = logger):
+        self.base_url = "https://discogs.com"
         self.url_parameters = "?sort=listed%2Cdesc&limit=250"
+        self.logger = logger
 
     def get_listings_soup(self, release_id: int) -> ResultSet:
-        response = requests.get(
-            f"{self.base_url}{release_id}{self.url_parameters}"
-        )
+        full_url = f"{self.base_url}" \
+                   f"/sell/release/{release_id}" \
+                   f"{self.url_parameters}"
+        self.logger.info(f"Requesting {full_url}")
+        response = requests.get(full_url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         return soup.find_all("tr", {"class": "shortcut_navigable"})
@@ -27,7 +33,7 @@ class ListingsScraper:
         )
         title = item_description_title.text
         href = item_description_title.attrs["href"]
-        print(f"Parsing listing with href {href}")
+        self.logger.info(f"Parsing listing with URL {self.base_url}{href}")
         listing_id = href.split("/")[-1]
         item_condition = listing.find("p", {"class": "item_condition"})
         media_condition = item_condition.find_all("span")[2].text.strip()
@@ -57,4 +63,5 @@ class ListingsScraper:
         soup_listings = self.get_listings_soup(release_id)
         for listing in soup_listings:
             listings.append(self.parse_listing(listing))
+        self.logger.info(f"Found {len(listings)} listings")
         return listings
