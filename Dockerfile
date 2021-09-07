@@ -1,14 +1,12 @@
 from python:slim-buster
 
-RUN useradd -ms /bin/bash argus
-
 ENV ARGUS_DIRECTORY=/usr/local/argus
+ENV STATE_DIRECTORY=/var/argus/state
+
+RUN mkdir -p ${STATE_DIRECTORY}
 
 COPY . ${ARGUS_DIRECTORY}
 
-USER argus
-
-WORKDIR ${ARGUS_DIRECTORY}
-
 RUN pip install -r ${ARGUS_DIRECTORY}/requirements.txt
 
+WORKDIR ${ARGUS_DIRECTORY}

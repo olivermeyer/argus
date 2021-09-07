@@ -17,7 +17,10 @@ class ListingsScraper:
         self.url_parameters = "?sort=listed%2Cdesc&limit=250"
         self.logger = logger
 
-    def get_listings_soup(self, release_id: int) -> ResultSet:
+    def get_listings_soup(self, release_id: str) -> ResultSet:
+        """
+        Gets ResultsSet containing the listings for the release.
+        """
         full_url = f"{self.base_url}" \
                    f"/sell/release/{release_id}" \
                    f"{self.url_parameters}"
@@ -28,12 +31,15 @@ class ListingsScraper:
         return soup.find_all("tr", {"class": "shortcut_navigable"})
 
     def parse_listing(self, listing: ResultSet) -> dict:
+        """
+        Parses the listings and inserts them into a dictionary.
+        """
         item_description_title = listing.find(
             "a", {"class": "item_description_title"}
         )
         title = item_description_title.text
         href = item_description_title.attrs["href"]
-        self.logger.info(f"Parsing listing with URL {self.base_url}{href}")
+        self.logger.debug(f"Parsing listing with URL {self.base_url}{href}")
         listing_id = href.split("/")[-1]
         item_condition = listing.find("p", {"class": "item_condition"})
         media_condition = item_condition.find_all("span")[2].text.strip()
@@ -48,14 +54,14 @@ class ListingsScraper:
         return {
             "title": title,
             "href": href,
-            "id": listing_id,
+            "listing_id": listing_id,
             "media_condition": media_condition,
             "sleeve_condition": sleeve_condition,
             "ships_from": ships_from,
             "price": price,
         }
 
-    def scrape(self, release_id: int) -> List[dict]:
+    def scrape(self, release_id: str) -> List[dict]:
         """
         Returns a list of dictionaries with the listings for the release.
         """
