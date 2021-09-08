@@ -1,8 +1,9 @@
 import os
 
+from src.logger import logger
 from src.scraper import ListingsScraper
 from src.state import read_state, write_state
-from src.logger import logger
+from src.telegram import send_new_listing_message
 
 
 RELEASE_IDS = [
@@ -60,7 +61,7 @@ if __name__ == "__main__":
             if release_id in listings_state:
                 for listing in current_listings:
                     if listing["id"] not in listings_state[release_id]:
-                        print("#### NEW LISTINGS!!! ALERT!!! ####")
+                        send_new_listing_message(listing)
             else:
                 logger.info(f"Release {release_id} not yet in state")
             listings_state[release_id] = [
