@@ -35,7 +35,7 @@ def prepare_new_listing_message(listing: dict) -> str:
 *{clean_string(listing['title'])}*
 {clean_string(listing['media_condition'])} / {clean_string(listing['sleeve_condition'])}
 {clean_string(listing['price'])} \({clean_string(listing['ships_from'])}\)
-See on [Discogs]({listing["url"]})"""
+View on [Discogs]({listing["url"]})"""
 
 
 def clean_string(string):
@@ -49,4 +49,6 @@ def clean_string(string):
         ".", "\."
     ).replace(
         "+", "\+"
+    ).replace(
+        "*", ""
     )
