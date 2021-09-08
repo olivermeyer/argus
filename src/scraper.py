@@ -55,7 +55,7 @@ class ListingsScraper:
         return {
             "title": title,
             "url": url,
-            "listing_id": listing_id,
+            "id": listing_id,
             "media_condition": media_condition,
             "sleeve_condition": sleeve_condition,
             "ships_from": ships_from,
