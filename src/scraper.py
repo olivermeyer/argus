@@ -39,7 +39,8 @@ class ListingsScraper:
         )
         title = item_description_title.text
         href = item_description_title.attrs["href"]
-        self.logger.debug(f"Parsing listing with URL {self.base_url}{href}")
+        url = f"{self.base_url}{href}"
+        self.logger.debug(f"Parsing listing with URL {url}")
         listing_id = href.split("/")[-1]
         item_condition = listing.find("p", {"class": "item_condition"})
         media_condition = item_condition.find_all("span")[2].text.strip()
@@ -53,7 +54,7 @@ class ListingsScraper:
         price = item_price.find("span", {"class": "price"}).text
         return {
             "title": title,
-            "href": href,
+            "url": url,
             "listing_id": listing_id,
             "media_condition": media_condition,
             "sleeve_condition": sleeve_condition,
