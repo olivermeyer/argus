@@ -1,22 +1,9 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.27"
-    }
-  }
-
-  required_version = ">= 0.14.9"
-}
-
-provider "aws" {
-  profile = "perso"
-  region  = "eu-west-1"
-}
-
 resource "aws_instance" "argus" {
   ami           = "ami-0d1bf5b68307103c2"
   instance_type = "t2.micro"
+  security_groups = [aws_security_group.argus.name]
+  iam_instance_profile = aws_iam_instance_profile.argus.name
+  user_data = file("${path.module}/user-data.bash")
 
   tags = {
     Name = "Argus"
