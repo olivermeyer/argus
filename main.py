@@ -3,7 +3,7 @@ import os
 from src.logger import logger
 from src.scraper import ListingsScraper
 from src.state import read_state, write_state
-from src.telegram import send_new_listing_message
+from src.telegram import send_new_listing_message, send_failure_message
 
 
 RELEASE_IDS = [
@@ -40,16 +40,18 @@ RELEASE_IDS = [
 ]
 
 
-if __name__ == "__main__":
-    # General idea:
-    # Loop over all release IDs in the wantlist; for each:
-    #   * Get current listings from Discogs
-    #   * If the release ID is not yet in the listing state, then skip
-    #     to the bottom
-    #   * If the release ID is in the listing state, then for each current
-    #     listing, check whether it's in the state. If not, it's a new
-    #     listing!
-    #   * Write the current listings for the release to the state
+def main():
+    """
+    General idea:
+    Loop over all release IDs in the wantlist; for each:
+      * Get current listings from Discogs
+      * If the release ID is not yet in the listing state, then skip
+        to the bottom
+      * If the release ID is in the listing state, then for each current
+        listing, check whether it's in the state. If not, it's a new
+        listing!
+      * Write the current listings for the release to the state
+    """
     while True:
         logger.info(f"Scanning {len(RELEASE_IDS)} releases")
         for release_id in RELEASE_IDS:
@@ -70,3 +72,11 @@ if __name__ == "__main__":
                 listings_state,
                 f"{os.environ['STATE_DIRECTORY']}/listings.json"
             )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        send_failure_message(str(e))
+        raise

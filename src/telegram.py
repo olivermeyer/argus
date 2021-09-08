@@ -14,6 +14,10 @@ def send_new_listing_message(listing: dict) -> None:
     )
 
 
+def send_failure_message(text: str) -> None:
+    send_message(clean_string(text))
+
+
 def send_message(text: str) -> None:
     url = \
         f"https://api.telegram.org/bot{secrets['telegram_token']}/sendMessage"
