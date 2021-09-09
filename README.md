@@ -21,7 +21,7 @@ Pull to EC2:
     docker pull 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest
     docker tag 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest argus:latest
     # start the process
-    docker run -d -t argus:latest python main.py
+    docker run --restart=on-failure -d -t argus:latest python main.py
 
 ## Troubleshooting
 ### On EC2

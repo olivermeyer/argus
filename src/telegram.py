@@ -51,4 +51,8 @@ def clean_string(string):
         "+", "\+"
     ).replace(
         "*", ""
+    ).replace(
+        "=", "\="
+    ).replace(
+        ":", "\:"
     )
