@@ -24,7 +24,7 @@ class ListingsScraper:
         full_url = f"{self.base_url}" \
                    f"/sell/release/{release_id}" \
                    f"{self.url_parameters}"
-        self.logger.info(f"Requesting {full_url}")
+        self.logger.debug(f"Requesting {full_url}")
         response = requests.get(full_url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
@@ -68,7 +68,7 @@ class ListingsScraper:
         """
         listings = []
         soup_listings = self.get_listings_soup(release_id)
-        self.logger.info(f"Found {len(soup_listings)} listings")
+        self.logger.debug(f"Found {len(soup_listings)} listings")
         for listing in soup_listings:
             listings.append(self.parse_listing(listing))
         return listings

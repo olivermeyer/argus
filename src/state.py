@@ -8,7 +8,7 @@ def read_state(path: str, logger: Logger = logger) -> dict:
     """
     Reads the state from the path.
     """
-    logger.info(f"Reading state from {path}")
+    logger.debug(f"Reading state from {path}")
     try:
         with open(path, "r") as fh:
             state = json.load(fh)
@@ -23,6 +23,6 @@ def write_state(state: dict, path: str, logger: Logger = logger) -> None:
     """
     Overwrites the contents of the path with the state.
     """
-    logger.info(f"Writing state to {path}")
+    logger.debug(f"Writing state to {path}")
     with open(path, "w+") as fh:
         json.dump(state, fh)

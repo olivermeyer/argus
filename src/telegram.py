@@ -1,9 +1,11 @@
 import os
+from logging import Logger
 
 import requests
 import yaml
 
 from src.helpers import abbreviate_condition
+from src.logger import logger
 
 
 with open(f"{os.environ['ARGUS_DIRECTORY']}/secrets.yaml", "r") as fh:
@@ -20,7 +22,8 @@ def send_failure_message(text: str) -> None:
     send_message(clean_string(text))
 
 
-def send_message(text: str) -> None:
+def send_message(text: str, logger: Logger = logger) -> None:
+    logger.info(f"Sending message with text {text}")
     url = \
         f"https://api.telegram.org/bot{secrets['telegram_token']}/sendMessage"
     params = {

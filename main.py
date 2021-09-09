@@ -55,6 +55,7 @@ def main():
     while True:
         logger.info(f"Scanning {len(RELEASE_IDS)} releases")
         for release_id in RELEASE_IDS:
+            logger.info(f"Process release {release_id}")
             current_listings = ListingsScraper().scrape(release_id)
             listings_state = read_state(
                 f"{os.environ['STATE_DIRECTORY']}/listings.json"
@@ -64,7 +65,7 @@ def main():
                     if listing["id"] not in listings_state[release_id]:
                         send_new_listing_message(listing)
             else:
-                logger.info(f"Release {release_id} not yet in state")
+                logger.debug(f"Release {release_id} not yet in state")
             listings_state[release_id] = [
                 listing["id"] for listing in current_listings
             ]
