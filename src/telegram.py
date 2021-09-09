@@ -3,6 +3,8 @@ import os
 import requests
 import yaml
 
+from src.helpers import abbreviate_condition
+
 
 with open(f"{os.environ['ARGUS_DIRECTORY']}/secrets.yaml", "r") as fh:
     secrets = yaml.safe_load(fh)
@@ -31,11 +33,15 @@ def send_message(text: str) -> None:
 
 
 def prepare_new_listing_message(listing: dict) -> str:
-    return f"""
-*{clean_string(listing['title'])}*
-{clean_string(listing['media_condition'])} / {clean_string(listing['sleeve_condition'])}
-{clean_string(listing['price'])} \({clean_string(listing['ships_from'])}\)
-View on [Discogs]({listing["url"]})"""
+    short_media_condition = abbreviate_condition(listing["media_condition"])
+    short_sleeve_condition = abbreviate_condition(listing["sleeve_condition"])
+    first_line = f"*{clean_string(listing['title'])}*"
+    second_line = f"{clean_string(short_media_condition)} / " \
+                  f"{clean_string(short_sleeve_condition)} \| " \
+                  f"{clean_string(listing['price'])} \| " \
+                  f"{clean_string(listing['ships_from'])}"
+    third_line = f"View on [Discogs]({listing['url']})"
+    return f"{first_line}\n{second_line}\n{third_line}"
 
 
 def clean_string(string):
