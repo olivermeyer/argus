@@ -1,15 +1,10 @@
-import os
 from logging import Logger
 
 import requests
-import yaml
 
 from src.helpers import abbreviate_condition
 from src.logger import logger
-
-
-with open(f"{os.environ['ARGUS_DIRECTORY']}/secrets.yaml", "r") as fh:
-    secrets = yaml.safe_load(fh)
+from src.secrets import secrets
 
 
 def send_new_listing_message(listing: dict) -> None:

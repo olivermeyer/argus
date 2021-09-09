@@ -1,43 +1,10 @@
 import os
 
+from src.discogs import get_wantlist_ids
 from src.logger import logger
 from src.scraper import ListingsScraper
 from src.state import read_state, write_state
 from src.telegram import send_new_listing_message, send_failure_message
-
-
-RELEASE_IDS = [
-    "4504379",
-    "7237693",
-    "7248670",
-    "7544386",
-    "8044643",
-    "9796117",
-    "10711117",
-    "11497334",
-    "14100916",
-    "14355421",
-    "15260825",
-    "15350761",
-    "15350980",
-    "11830308",
-    "1484030",
-    "10300882",
-    "11793980",
-    "4870292",
-    "11770297",
-    "7429346",
-    "4918656",
-    "13743851",
-    "2607649",
-    "7167416",
-    "3757676",
-    "7998269",
-    "5325496",
-    "12273825",
-    "12776226",
-    "233588",
-]
 
 
 def main():
@@ -53,8 +20,9 @@ def main():
       * Write the current listings for the release to the state
     """
     while True:
-        logger.info(f"Scanning {len(RELEASE_IDS)} releases")
-        for release_id in RELEASE_IDS:
+        wantlist_ids = get_wantlist_ids()
+        logger.info(f"Scanning {len(wantlist_ids)} releases")
+        for release_id in wantlist_ids:
             logger.info(f"Process release {release_id}")
             current_listings = ListingsScraper().scrape(release_id)
             listings_state = read_state(
