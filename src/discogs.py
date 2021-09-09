@@ -3,12 +3,9 @@ from typing import List
 import discogs_client
 
 from src.logger import logger
-from src.secrets import secrets
 
 
-def get_wantlist_ids(
-        discogs_token: str = secrets["discogs_token"]
-) -> List[str]:
+def get_wantlist_ids(discogs_token: str) -> List[str]:
     """
     Returns the IDs in the wantlist for the account linked to the token.
     """

@@ -7,22 +7,23 @@ from src.logger import logger
 from src.secrets import secrets
 
 
-def send_new_listing_message(listing: dict) -> None:
+def send_new_listing_message(chat_id: int, listing: dict) -> None:
     send_message(
+        chat_id=chat_id,
         text=prepare_new_listing_message(listing)
     )
 
 
-def send_failure_message(text: str) -> None:
-    send_message(clean_string(text))
+def send_failure_message(chat_id: int, text: str) -> None:
+    send_message(chat_id=chat_id, text=clean_string(text))
 
 
-def send_message(text: str, logger: Logger = logger) -> None:
-    logger.info(f"Sending message with text {text}")
+def send_message(chat_id: int, text: str, logger: Logger = logger) -> None:
+    logger.debug(f"Sending message with text {text}")
     url = \
         f"https://api.telegram.org/bot{secrets['telegram_token']}/sendMessage"
     params = {
-        "chat_id": secrets["telegram_chat_id"],
+        "chat_id": chat_id,
         "text": text,
         "parse_mode": "MarkdownV2",
     }

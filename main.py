@@ -1,13 +1,23 @@
 import os
+import argparse
 
 from src.discogs import get_wantlist_ids
 from src.logger import logger
 from src.scraper import ListingsScraper
 from src.state import read_state, write_state
 from src.telegram import send_new_listing_message, send_failure_message
+from src.secrets import secrets
 
 
-def main():
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--user",
+    choices=["oli", "pa"],
+    required=True,
+)
+
+
+def main(user):
     """
     General idea:
     Loop over all release IDs in the wantlist; for each:
@@ -19,11 +29,12 @@ def main():
         listing!
       * Write the current listings for the release to the state
     """
+    user_secrets = secrets[user]
     while True:
-        wantlist_ids = get_wantlist_ids()
+        wantlist_ids = get_wantlist_ids(user_secrets['discogs_token'])
         logger.info(f"Scanning {len(wantlist_ids)} releases")
         for release_id in wantlist_ids:
-            logger.info(f"Process release {release_id}")
+            logger.info(f"Processing release {release_id}")
             current_listings = ListingsScraper().scrape(release_id)
             listings_state = read_state(
                 f"{os.environ['STATE_DIRECTORY']}/listings.json"
@@ -31,7 +42,11 @@ def main():
             if release_id in listings_state:
                 for listing in current_listings:
                     if listing["id"] not in listings_state[release_id]:
-                        send_new_listing_message(listing)
+                        logger.info(f"Found new listing: {listing['id']}")
+                        send_new_listing_message(
+                            user_secrets['telegram_chat_id'],
+                            listing
+                        )
             else:
                 logger.debug(f"Release {release_id} not yet in state")
             listings_state[release_id] = [
@@ -44,8 +59,9 @@ def main():
 
 
 if __name__ == "__main__":
+    args = parser.parse_args()
     try:
-        main()
+        main(user=args.user)
     except Exception as e:
-        send_failure_message(str(e))
+        send_failure_message(secrets['oli']['telegram_chat_id'], str(e))
         raise
