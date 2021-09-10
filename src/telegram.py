@@ -43,7 +43,7 @@ def prepare_new_listing_message(listing: dict) -> str:
     return f"{first_line}\n{second_line}\n{third_line}"
 
 
-def clean_string(string):
+def clean_string(string: str) -> str:
     return string.replace(
         "-", "\-"
     ).replace(
