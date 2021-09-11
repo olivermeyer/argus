@@ -12,9 +12,9 @@ def read_state(path: str, logger: Logger = logger) -> dict:
     try:
         with open(path, "r") as fh:
             state = json.load(fh)
-        logger.debug("State file found")
+        logger.info("State file found")
     except FileNotFoundError:
-        logger.debug(f"State file not found; returning empty state")
+        logger.info(f"State file not found; returning empty state")
         state = {}
     return state
 
