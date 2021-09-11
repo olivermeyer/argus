@@ -1,6 +1,7 @@
 from logging import Logger
 
 import requests
+from requests.exceptions import HTTPError
 
 from src.helpers import abbreviate_condition
 from src.logger import logger
@@ -8,14 +9,17 @@ from src.secrets import secrets
 
 
 def send_new_listing_message(chat_id: int, listing: dict) -> None:
-    send_message(
-        chat_id=chat_id,
-        text=prepare_new_listing_message(listing)
-    )
-
-
-def send_failure_message(chat_id: int, text: str) -> None:
-    send_message(chat_id=chat_id, text=clean_string(text))
+    try:
+        send_message(
+            chat_id=chat_id,
+            text=prepare_new_listing_message(listing)
+        )
+    except HTTPError:
+        send_message(
+            chat_id=secrets['oli']['telegram_chat_id'],
+            text=f"Failed to send new listing {listing['id']} to {chat_id}"
+        )
+        raise
 
 
 def send_message(chat_id: int, text: str, logger: Logger = logger) -> None:

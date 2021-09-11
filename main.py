@@ -5,7 +5,7 @@ from src.discogs import get_wantlist_ids
 from src.logger import logger
 from src.scraper import ListingsScraper
 from src.state import read_state, write_state
-from src.telegram import send_new_listing_message, send_failure_message
+from src.telegram import send_new_listing_message, send_message
 from src.secrets import secrets
 
 
@@ -63,5 +63,5 @@ if __name__ == "__main__":
     try:
         main(user=args.user)
     except Exception as e:
-        send_failure_message(secrets['oli']['telegram_chat_id'], str(e))
+        send_message(secrets['oli']['telegram_chat_id'], str(e))
         raise
