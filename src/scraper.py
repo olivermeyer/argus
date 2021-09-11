@@ -20,7 +20,7 @@ class ListingsScraper:
         self.logger = logger
 
     @retry(exceptions=HTTPError, delay=5, tries=3)
-    def get_listings_soup(self, release_id: str) -> ResultSet:
+    def get_listings_for_release(self, release_id: str) -> ResultSet:
         """
         Gets ResultsSet containing the listings for the release.
         """
@@ -70,7 +70,7 @@ class ListingsScraper:
         Returns a list of dictionaries with the listings for the release.
         """
         listings = []
-        soup_listings = self.get_listings_soup(release_id)
+        soup_listings = self.get_listings_for_release(release_id)
         self.logger.debug(f"Found {len(soup_listings)} listings")
         for listing in soup_listings:
             listings.append(self.parse_listing(listing))
