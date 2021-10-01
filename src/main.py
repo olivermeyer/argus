@@ -41,5 +41,5 @@ def main(secrets, user):
                 logger.debug(f"Release {release_id} not yet in state")
             db.update_listings(
                 release_id=release_id,
-                listing_ids=[listing["id"] for listing in discogs_listings] or ["none"],
+                listings=discogs_listings,
             )

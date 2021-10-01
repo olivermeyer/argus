@@ -120,14 +120,28 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
         results = self.execute(query)
         return [listing["listing_id"] for listing in results]
 
-    def update_listings(self, release_id, listing_ids) -> None:
+    def update_listings(self, release_id, listings: List[dict]) -> None:
         """
         Updates the listings for a release.
         """
         self.logger.info(f"Updating listings for release {release_id}")
-        values = [
-            f"('{release_id}', '{listing_id}')" for listing_id in listing_ids
-        ]
+        if listings:
+            values = []
+            for listing in listings:
+                listing_id = listing["id"]
+                listing_title = listing["title"].replace("'", "")
+                listing_url = listing["url"]
+                listing_media_condition = listing["media_condition"]
+                listing_sleeve_condition = listing["sleeve_condition"]
+                listing_ships_from = listing["ships_from"]
+                listing_price = listing["price"]
+                values.append(
+                    f"('{release_id}', '{listing_id}', '{listing_title}', '{listing_url}', '{listing_media_condition}', '{listing_sleeve_condition}', '{listing_ships_from}', '{listing_price}')"
+                )
+        else:
+            values = [
+                f"('{release_id}', 'none', 'none', 'none', 'none', 'none', 'none', 'none')"
+            ]
         query = f"""
 DELETE FROM listings WHERE release_id='{release_id}';
 INSERT INTO listings VALUES {', '.join(values)};

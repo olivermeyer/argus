@@ -23,7 +23,7 @@ Build and push the image:
 
 Update and restart on EC2:
 
-    # connect to instance
+    make ssh-connect
     sudo su root
     source /usr/local/argus/update_and_start.sh
 

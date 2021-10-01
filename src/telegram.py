@@ -28,7 +28,7 @@ def send_message(chat_id: int, text: str, logger: Logger = logger) -> None:
         f"https://api.telegram.org/bot{secrets['telegram_token']}/sendMessage"
     params = {
         "chat_id": chat_id,
-        "text": text,
+        "text": clean_string(text),
         "parse_mode": "MarkdownV2",
     }
     r = requests.get(url, params=params)

@@ -7,4 +7,3 @@ build-push:
 
 ssh-connect:
 	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com
-
