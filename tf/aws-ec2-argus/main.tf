@@ -4,8 +4,13 @@ resource "aws_instance" "this" {
   security_groups      = [aws_security_group.this.name]
   iam_instance_profile = aws_iam_instance_profile.this.name
   user_data            = file("${path.module}/user-data.bash")
+  key_name             = var.key_name
 
   tags = {
     Name = local.common_resource_name
+  }
+
+  lifecycle {
+    ignore_changes = [user_data]
   }
 }

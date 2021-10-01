@@ -16,6 +16,15 @@ resource "aws_security_group_rule" "allow-ingress-from-console" {
   cidr_blocks       = ["18.202.216.48/29"]
 }
 
+resource "aws_security_group_rule" "allow-ingress-from-my-ip" {
+  security_group_id = aws_security_group.this.id
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["185.107.13.13/32"]
+}
+
 resource "aws_security_group_rule" "allow-egress" {
   security_group_id = aws_security_group.this.id
   type              = "egress"

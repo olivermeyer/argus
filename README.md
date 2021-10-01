@@ -1,16 +1,22 @@
 # argus
 
+## Access the instance
+The following command only works from whitelisted IPs. If the command does not
+run, check that ingress from your IP is allowed by a security group rule.
+
+    make ssh-connect
+
 ## Deployment
 ### Build and Push to ECR
 Build and push the image:
 
     make build-push
 
-Pull to EC2:
+Update and restart on EC2:
 
     # connect to instance
     sudo su root
-    update_argus
+    source /usr/local/argus/update_and_start.sh
 
 ## Troubleshooting
 ### On EC2
