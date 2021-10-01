@@ -7,6 +7,6 @@ variable "vpc_id" {
 }
 
 variable "key_name" {
-  type = string
+  type    = string
   default = ""
 }
