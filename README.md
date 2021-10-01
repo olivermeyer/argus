@@ -19,6 +19,7 @@ run, check that ingress from your IP is allowed by a security group rule.
 ### Build and Push to ECR
 Build and push the image:
 
+    export AWS_PROFILE=perso
     make build-push
 
 Update and restart on EC2:
