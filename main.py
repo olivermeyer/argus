@@ -1,6 +1,7 @@
 import os
 import argparse
 
+from src.db import DBClient
 from src.discogs import get_wantlist_ids
 from src.logger import logger
 from src.scraper import ListingsScraper
@@ -17,10 +18,11 @@ parser.add_argument(
 )
 
 
-def main(user):
+def main(secrets, user):
     """
     General idea:
-    Loop over all release IDs in the wantlist; for each:
+    First, initialize the DB.
+    Then, loop over all release IDs in the wantlist; for each:
       * Get current listings from Discogs
       * If the release ID is not yet in the listing state, then skip
         to the bottom
@@ -30,6 +32,8 @@ def main(user):
       * Write the current listings for the release to the state
     """
     user_secrets = secrets[user]
+    db = DBClient.from_config(secrets["db"])
+    db.initialize_argus()
     while True:
         wantlist_ids = get_wantlist_ids(user_secrets['discogs_token'])
         logger.info(f"Scanning {len(wantlist_ids)} releases")
@@ -61,7 +65,10 @@ def main(user):
 if __name__ == "__main__":
     args = parser.parse_args()
     try:
-        main(user=args.user)
+        main(
+            secrets=secrets,
+            user=args.user,
+        )
     except Exception as e:
         send_message(secrets['oli']['telegram_chat_id'], str(e))
         raise
