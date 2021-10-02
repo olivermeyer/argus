@@ -24,9 +24,7 @@ Build and push the image:
 
 Update and restart on EC2:
 
-    make ssh-connect
-    sudo su root
-    source /usr/local/argus/update_and_start.sh
+    make ssh-update-and-start
 
 ## Troubleshooting
 ### On EC2

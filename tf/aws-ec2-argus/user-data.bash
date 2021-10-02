@@ -1,7 +1,11 @@
 #!/bin/bash
 
-mkdir /usr/local/argus
+# INSTALL DOCKER
+yum install -y docker
+service docker start
 
+# START ARGUS
+mkdir /usr/local/argus
 cat >/usr/local/argus/start_argus.sh <<EOF
 #!/bin/bash
 TARGET=\$1
@@ -11,25 +15,16 @@ if [ "\$(docker ps -aq -f name=\$TARGET)" ]; then
 fi
 docker run --name \$TARGET -v \$TARGET:/usr/local/argus/state --restart=on-failure -d -t argus:latest python main.py --user \${TARGET}
 EOF
-
-
 cat >/usr/local/argus/update_argus.sh <<EOF
 #!/bin/bash
 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 595687261518.dkr.ecr.eu-west-1.amazonaws.com
 docker pull 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest
 docker tag 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest argus:latest
 EOF
-
-
 cat >/usr/local/argus/update_and_start.sh <<EOF
 #!/bin/bash
 source /usr/local/argus/update_argus.sh
 source /usr/local/argus/start_argus.sh oli
 source /usr/local/argus/start_argus.sh pa
 EOF
-
-sudo su root
-yum install -y docker
-service docker start
-
-source /usr/local/argus/update_and_start.sh.sh
+source /usr/local/argus/update_and_start.sh

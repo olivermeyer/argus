@@ -22,5 +22,5 @@ if __name__ == "__main__":
         )
     except Exception as e:
         telegram = TelegramBot(secrets["telegram_token"])
-        telegram.send_message(secrets["oli"]["telegram_chat_id"], str(e))
+        telegram.send_message(secrets["error_chat_id"], str(e))
         raise
