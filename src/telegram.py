@@ -1,67 +1,80 @@
 from logging import Logger
 
-import requests
-from requests.exceptions import HTTPError
+import telegram
 
-from src.helpers import abbreviate_condition
 from src.logger import logger
-from src.secrets import secrets
 
 
-def send_new_listing_message(chat_id: int, listing: dict) -> None:
-    try:
-        send_message(
-            chat_id=chat_id,
-            text=prepare_new_listing_message(listing)
+class TelegramBot(telegram.Bot):
+    def __init__(self, token: str, logger: Logger = logger, **kwargs):
+        self.logger = logger
+        super(TelegramBot, self).__init__(token, **kwargs)
+
+    def send_new_listing_message(self, chat_id: int, listing: dict) -> None:
+        """
+        Prepares and sends a message for a new listing.
+        """
+        text = self.prepare_new_listing_message(listing)
+        try:
+            self.send_message(chat_id, text, parse_mode='MarkdownV2')
+        except telegram.error.BadRequest:
+            raise RuntimeError(
+                f"Failed to send listing {listing['id']} to chat {chat_id}"
+            )
+
+    def prepare_new_listing_message(self, listing: dict) -> str:
+        """
+        Builds the text for a new listing message.
+
+        * The first line contains the title in bold
+        * The second line contains the condition, price and location
+        * The third line contains a link to the listing
+        """
+        first_line = f"{listing['title']}"
+        second_line = "{mc} / {sc} | {p} | {sf}".format(
+            mc=self.short_condition(listing["media_condition"]),
+            sc=self.short_condition(listing["sleeve_condition"]),
+            p=listing["price"],
+            sf=listing["ships_from"]
         )
-    except HTTPError:
-        send_message(
-            chat_id=secrets['oli']['telegram_chat_id'],
-            text=f"Failed to send new listing {listing['id']} to {chat_id}"
+        third_line = f"View on [Discogs]({listing['url']})"
+        return f"*{self.clean_string(first_line)}*\n" \
+               f"{self.clean_string(second_line)}\n" \
+               f"{third_line}"
+
+    @staticmethod
+    def short_condition(condition: str) -> str:
+        """
+        Returns the abbreviated condition.
+
+        E.g. 'Very Good+ (VG+)' becomes 'VG+'. 'Generic' becomes 'Gen'.
+        """
+        if "Generic" in condition:
+            short_condition = "Gen"
+        else:
+            short_condition = condition[
+                              condition.find("(") + 1:condition.find(")")
+                              ]
+        return short_condition
+
+    @staticmethod
+    def clean_string(string: str) -> str:
+        return string.replace(
+            "-", "\-"
+        ).replace(
+            "(", "\("
+        ).replace(
+            ")", "\)"
+        ).replace(
+            ".", "\."
+        ).replace(
+            "+", "\+"
+        ).replace(
+            "*", ""
+        ).replace(
+            "=", "\="
+        ).replace(
+            ":", "\:"
+        ).replace(
+            "|", "\|"
         )
-        raise
-
-
-def send_message(chat_id: int, text: str, logger: Logger = logger) -> None:
-    logger.debug(f"Sending message with text {text}")
-    url = \
-        f"https://api.telegram.org/bot{secrets['telegram_token']}/sendMessage"
-    params = {
-        "chat_id": chat_id,
-        "text": clean_string(text),
-        "parse_mode": "MarkdownV2",
-    }
-    r = requests.get(url, params=params)
-    r.raise_for_status()
-
-
-def prepare_new_listing_message(listing: dict) -> str:
-    short_media_condition = abbreviate_condition(listing["media_condition"])
-    short_sleeve_condition = abbreviate_condition(listing["sleeve_condition"])
-    first_line = f"*{clean_string(listing['title'])}*"
-    second_line = f"{clean_string(short_media_condition)} / " \
-                  f"{clean_string(short_sleeve_condition)} \| " \
-                  f"{clean_string(listing['price'])} \| " \
-                  f"{clean_string(listing['ships_from'])}"
-    third_line = f"View on [Discogs]({listing['url']})"
-    return f"{first_line}\n{second_line}\n{third_line}"
-
-
-def clean_string(string: str) -> str:
-    return string.replace(
-        "-", "\-"
-    ).replace(
-        "(", "\("
-    ).replace(
-        ")", "\)"
-    ).replace(
-        ".", "\."
-    ).replace(
-        "+", "\+"
-    ).replace(
-        "*", ""
-    ).replace(
-        "=", "\="
-    ).replace(
-        ":", "\:"
-    )

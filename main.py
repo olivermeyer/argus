@@ -1,7 +1,7 @@
 import argparse
 
-from src.main import main
-from src.telegram import send_message
+from src.entrypoint import entrypoint
+from src.telegram import TelegramBot
 from src.secrets import secrets
 
 
@@ -16,10 +16,11 @@ parser.add_argument(
 if __name__ == "__main__":
     args = parser.parse_args()
     try:
-        main(
+        entrypoint(
             secrets=secrets,
             user=args.user,
         )
     except Exception as e:
-        send_message(secrets['oli']['telegram_chat_id'], str(e))
+        telegram = TelegramBot(secrets["telegram_token"])
+        telegram.send_message(secrets["oli"]["telegram_chat_id"], str(e))
         raise

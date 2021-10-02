@@ -2,10 +2,10 @@ from src.db import DBClient
 from src.discogs import get_wantlist_ids
 from src.logger import logger
 from src.scraper import ListingsScraper
-from src.telegram import send_new_listing_message
+from src.telegram import TelegramBot
 
 
-def main(secrets, user):
+def entrypoint(secrets, user):
     """
     General idea:
     First, initialize the DB.
@@ -21,6 +21,7 @@ def main(secrets, user):
     user_secrets = secrets[user]
     db = DBClient.from_config(secrets["db"])  # TODO: close this connection
     db.initialize_argus()
+    telegram = TelegramBot(secrets["telegram_token"])
     while True:
         wantlist_ids = get_wantlist_ids(user_secrets['discogs_token'])
         db.update_wantlist(user=user, release_ids=wantlist_ids)
@@ -33,7 +34,7 @@ def main(secrets, user):
                 for listing in discogs_listings:
                     if listing["id"] not in db_listings:
                         logger.info(f"Found new listing: {listing['id']}")
-                        send_new_listing_message(
+                        telegram.send_new_listing_message(
                             user_secrets['telegram_chat_id'],
                             listing
                         )
