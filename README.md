@@ -1,5 +1,15 @@
 # argus
 
+## Onboarding a new user
+1. Get their Discogs API token and add it to `secrets.yaml`
+1. Get their chat ID
+    1. Have the new user start a conversation with `@ArcogsBot` on Telegram
+    1. Monitor the bot's [updates](https://api.telegram.org/bot1997819840:AAFlb7dYUy6m6hl0VIEiQHPWNx3laid2zKI/getUpdates)
+       and get the chat ID for the conversation
+    1. Add the chat ID to `secrets.yaml`
+1. Add the user to `update_and_start.sh` in `user-data.bash`
+1. Deploy Argus
+
 ## Development
 Build the image locally:
 
