@@ -8,7 +8,7 @@ from src.secrets import secrets
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--user",
-    choices=["oli", "pa"],
+    choices=["oli", "pa", "ash"],
     required=True,
 )
 
