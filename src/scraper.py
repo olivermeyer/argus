@@ -19,7 +19,7 @@ class ListingsScraper:
         self.url_parameters = "?sort=listed%2Cdesc&limit=250"
         self.logger = logger
 
-    @retry(exceptions=HTTPError, delay=5, tries=3)
+    @retry(exceptions=HTTPError, delay=5, tries=3, logger=logger)
     def get_listings_for_release(self, release_id: str) -> ResultSet:
         """
         Gets ResultsSet containing the listings for the release.
