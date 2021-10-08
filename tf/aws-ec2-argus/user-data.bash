@@ -26,5 +26,6 @@ cat >/usr/local/argus/update_and_start.sh <<EOF
 source /usr/local/argus/update_argus.sh
 source /usr/local/argus/start_argus.sh oli
 source /usr/local/argus/start_argus.sh pa
+source /usr/local/argus/start_argus.sh ash
 EOF
 source /usr/local/argus/update_and_start.sh
