@@ -14,11 +14,11 @@
 ## Development
 Build the image locally:
 
-    docker build . -t argus:dev
+    make build-dev
 
 Enter the image and attach all files in `src/`:
 
-    docker run -v "$(pwd)"/src:/usr/local/argus/src -it argus:dev /bin/bash
+    make run-dev
 
 ## Access the instance
 The following command only works from whitelisted IPs. If the command does not
