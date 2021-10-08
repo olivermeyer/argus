@@ -1,4 +1,4 @@
-from python:slim-buster
+FROM python:3.7.12-slim-buster
 
 ENV ARGUS_DIRECTORY=/usr/local/argus
 ENV STATE_DIRECTORY=${ARGUS_DIRECTORY}/state
@@ -13,6 +13,6 @@ COPY ./main.py ${ARGUS_DIRECTORY}/main.py
 COPY ./requirements.txt ${ARGUS_DIRECTORY}/requirements.txt
 COPY ./secrets.yaml ${ARGUS_DIRECTORY}/secrets.yaml
 
-RUN pip install -r ${ARGUS_DIRECTORY}/requirements.txt
+RUN pip install --no-cache -r ${ARGUS_DIRECTORY}/requirements.txt
 
 WORKDIR ${ARGUS_DIRECTORY}
