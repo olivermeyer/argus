@@ -5,7 +5,7 @@ from src.scraper import ListingsScraper
 from src.telegram import TelegramBot
 
 
-def entrypoint(secrets, user):
+def entrypoint(secrets, user, logger=logger):
     """
     General idea:
     First, initialize the DB.

@@ -1,3 +1,4 @@
+from logging import Logger
 from typing import List
 
 import discogs_client
@@ -5,7 +6,11 @@ import discogs_client
 from src.logger import logger
 
 
-def get_wantlist_ids(discogs_token: str, page_size: int = 100) -> List[str]:
+def get_wantlist_ids(
+        discogs_token: str,
+        page_size: int = 100,
+        logger: Logger = logger
+) -> List[str]:
     """
     Returns the IDs in the wantlist for the account linked to the token.
     """

@@ -104,7 +104,7 @@ class DBClient:
         """
         Updates the wantlists table for the user.
         """
-        logger.info(f"Updating wantlist for user {user}")
+        self.logger.info(f"Updating wantlist for user {user}")
         values = [f"('{user}', '{release_id}')" for release_id in release_ids]
         query = f"""
 DELETE FROM wantlists WHERE username='{user}';
