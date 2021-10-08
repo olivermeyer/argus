@@ -1,3 +1,5 @@
+from logging import Logger
+
 from src.db import DBClient
 from src.discogs import get_wantlist_ids
 from src.logger import logger
@@ -5,7 +7,11 @@ from src.scraper import ListingsScraper
 from src.telegram import TelegramBot
 
 
-def entrypoint(secrets, user, logger=logger):
+def entrypoint(
+        secrets: dict,
+        user: str,
+        logger: Logger = logger
+) -> None:
     """
     General idea:
     First, initialize the DB.
