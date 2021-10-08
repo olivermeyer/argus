@@ -36,12 +36,3 @@ Build and push the image:
 Update and restart on EC2:
 
     make ssh-update-and-start
-
-## Troubleshooting
-### On EC2
-
-    # connect to instance
-    # find the relevant container:
-    docker ps -a
-    # check logs for the container:
-    docker logs <name>
