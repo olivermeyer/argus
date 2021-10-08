@@ -1,6 +1,7 @@
 # argus
 
 ## Onboarding a new user
+1. Add user to the `--user` argument choices in `main.py`
 1. Get their Discogs API token and add it to `secrets.yaml`
 1. Get their chat ID
     1. Have the new user start a conversation with `@ArcogsBot` on Telegram
