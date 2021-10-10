@@ -23,5 +23,5 @@ deploy: build-push ssh-update-and-start  ## Build, push, update and restart Argu
 build-dev:  ## Build with `dev` tag
 	docker build . -t argus:dev
 
-run-dev:  # Enter the container with `dev` tag
+run-dev:  ## Enter the container with `dev` tag
 	docker run -v "$$(pwd)"/src:/usr/local/argus/src -it argus:dev /bin/bash
