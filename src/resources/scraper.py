@@ -7,7 +7,7 @@ from bs4.element import ResultSet
 from requests.exceptions import HTTPError
 from retry import retry
 
-from src.logger import logger
+from src.resources.logger import logger
 
 
 class ListingsScraper:

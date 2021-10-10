@@ -1,8 +1,8 @@
 import argparse
 
-from src.entrypoint import entrypoint
-from src.telegram import TelegramBot
-from src.secrets import secrets
+from src.tasks.crawl import crawl
+from src.resources.telegram import TelegramBot
+from src.resources.secrets import secrets
 
 
 parser = argparse.ArgumentParser()
@@ -16,7 +16,7 @@ parser.add_argument(
 if __name__ == "__main__":
     args = parser.parse_args()
     try:
-        entrypoint(
+        crawl(
             secrets=secrets,
             user=args.user,
         )

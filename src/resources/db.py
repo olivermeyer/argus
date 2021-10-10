@@ -5,7 +5,7 @@ from typing import List
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from src.logger import logger
+from src.resources.logger import logger
 
 
 class DBClient:
@@ -89,6 +89,7 @@ class DBClient:
         if not init_sql_path:
             init_sql_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
+                "..",
                 "sql",
                 "init.sql"
             )

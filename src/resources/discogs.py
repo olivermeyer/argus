@@ -3,7 +3,7 @@ from typing import List
 
 import discogs_client
 
-from src.logger import logger
+from src.resources.logger import logger
 
 
 def get_wantlist_ids(

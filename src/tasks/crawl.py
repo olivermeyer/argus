@@ -1,13 +1,13 @@
 from logging import Logger
 
-from src.db import DBClient
-from src.discogs import get_wantlist_ids
-from src.logger import logger
-from src.scraper import ListingsScraper
-from src.telegram import TelegramBot
+from src.resources.db import DBClient
+from src.resources.discogs import get_wantlist_ids
+from src.resources.logger import logger
+from src.resources.scraper import ListingsScraper
+from src.resources.telegram import TelegramBot
 
 
-def entrypoint(
+def crawl(
         secrets: dict,
         user: str,
         logger: Logger = logger

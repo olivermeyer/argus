@@ -3,7 +3,7 @@ from logging import Logger
 
 import yaml
 
-from src.logger import logger
+from src.resources.logger import logger
 
 
 SECRETS_PATH = f"{os.environ['ARGUS_DIRECTORY']}/secrets.yaml"
