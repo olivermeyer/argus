@@ -27,12 +27,7 @@ run, check that ingress from your IP is allowed by a security group rule.
     make ssh-connect
 
 ## Deployment
-### Build and Push to ECR
-Build and push the image:
+A single Makefile target builds the image, pushes it to ECR, then pulls it to
+the EC2 instance and restarts the processes:
 
-    export AWS_PROFILE=perso
-    make build-push
-
-Update and restart on EC2:
-
-    make ssh-update-and-start
+    make deploy
