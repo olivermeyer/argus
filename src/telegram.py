@@ -59,24 +59,16 @@ class TelegramBot(telegram.Bot):
 
     @staticmethod
     def clean_string(string: str) -> str:
-        return string.replace(
-            "-", "\-"
-        ).replace(
-            "(", "\("
-        ).replace(
-            ")", "\)"
-        ).replace(
-            ".", "\."
-        ).replace(
-            "+", "\+"
-        ).replace(
-            "*", ""
-        ).replace(
-            "=", "\="
-        ).replace(
-            ":", "\:"
-        ).replace(
-            "|", "\|"
-        ).replace(
-            "!", "\!"
-        )
+        """
+        Prefixes certain characters with a backslash.
+
+        The list of characters is taken from
+        https://core.telegram.org/bots/api#sendmessage.
+        """
+        reserved_chars = [
+            "_", "*", "[", "]", "(", ")", "~", "`", ">",
+            "#", "+", "-", "=", "|", "{", "}", ".", "!",
+        ]
+        for char in reserved_chars:
+            string.replace(char, f"\\{char}")
+        return string
