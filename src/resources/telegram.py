@@ -70,5 +70,5 @@ class TelegramBot(telegram.Bot):
             "#", "+", "-", "=", "|", "{", "}", ".", "!",
         ]
         for char in reserved_chars:
-            string.replace(char, f"\\{char}")
+            string = string.replace(char, f"\\{char}")
         return string
