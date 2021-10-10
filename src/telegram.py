@@ -77,4 +77,6 @@ class TelegramBot(telegram.Bot):
             ":", "\:"
         ).replace(
             "|", "\|"
+        ).replace(
+            "!", "\!"
         )
