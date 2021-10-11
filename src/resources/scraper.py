@@ -4,7 +4,7 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ChunkedEncodingError
 from retry import retry
 
 from src.resources.logger import logger
@@ -19,7 +19,12 @@ class ListingsScraper:
         self.url_parameters = "?sort=listed%2Cdesc&limit=250"
         self.logger = logger
 
-    @retry(exceptions=HTTPError, delay=5, tries=3, logger=logger)
+    @retry(
+        exceptions=(HTTPError, ChunkedEncodingError),
+        delay=5,
+        tries=3,
+        logger=logger
+    )
     def get_listings_for_release(self, release_id: str) -> ResultSet:
         """
         Gets ResultsSet containing the listings for the release.
