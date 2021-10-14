@@ -21,9 +21,10 @@ class ListingsScraper:
 
     @retry(
         exceptions=(HTTPError, ChunkedEncodingError),
-        delay=5,
+        delay=1,
         tries=3,
-        logger=logger
+        backoff=2,
+        logger=logger,
     )
     def get_listings_for_release(self, release_id: str) -> ResultSet:
         """
