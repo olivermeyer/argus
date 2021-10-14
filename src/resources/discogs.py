@@ -1,11 +1,21 @@
+from json import JSONDecodeError
 from logging import Logger
 from typing import List
 
 import discogs_client
+from retry import retry
 
 from src.resources.logger import logger
 
 
+# user.wantlist can raise JSONDecodeError
+@retry(
+    exceptions=JSONDecodeError,
+    delay=1,
+    tries=3,
+    backoff=2,
+    logger=logger,
+)
 def get_wantlist_ids(
         discogs_token: str,
         page_size: int = 100,
