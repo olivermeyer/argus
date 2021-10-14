@@ -7,4 +7,5 @@ module "aws-rds-argus-prod" {
   ingress_sg_ids = {
     (module.argus-prod-2.sg_id) = "argus-prod-2"
   }
+  whitelisted_cidr_blocks = local.whitelisted_cidr_blocks
 }

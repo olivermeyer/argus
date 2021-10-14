@@ -10,3 +10,8 @@ variable "key_name" {
   type    = string
   default = ""
 }
+
+variable "whitelisted_cidr_blocks" {
+  type    = map(string)
+  default = {}
+}

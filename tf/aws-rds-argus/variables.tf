@@ -14,3 +14,8 @@ variable "ingress_sg_ids" {
   type    = map(string)
   default = {}
 }
+
+variable "whitelisted_cidr_blocks" {
+  type    = map(string)
+  default = {}
+}

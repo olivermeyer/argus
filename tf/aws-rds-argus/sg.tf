@@ -19,12 +19,14 @@ resource "aws_security_group_rule" "allow-ingress-from-ec2-argus-sg" {
   description              = each.value
 }
 
-resource "aws_security_group_rule" "allow-ingress-from-my-ip" {
+resource "aws_security_group_rule" "allow-ingress-from-cidr_blocks" {
+  for_each = var.whitelisted_cidr_blocks
+
   security_group_id = aws_security_group.this.id
   type              = "ingress"
-  from_port         = 5432
-  to_port           = 5432
+  from_port         = 22
+  to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["185.107.13.13/32"]
-  description       = "allow-my-ip"
+  cidr_blocks       = [each.key]
+  description       = "allow-${each.value}"
 }
