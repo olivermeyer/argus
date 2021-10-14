@@ -4,7 +4,9 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-from requests.exceptions import HTTPError, ChunkedEncodingError
+from requests.exceptions import HTTPError
+from requests.exceptions import ChunkedEncodingError
+from requests.exceptions import ConnectionError
 from retry import retry
 
 from src.resources.logger import logger
@@ -20,7 +22,7 @@ class ListingsScraper:
         self.logger = logger
 
     @retry(
-        exceptions=(HTTPError, ChunkedEncodingError),
+        exceptions=(HTTPError, ChunkedEncodingError, ConnectionError),
         delay=1,
         tries=3,
         backoff=2,
