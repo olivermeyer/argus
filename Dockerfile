@@ -1,9 +1,9 @@
 FROM python:3.7.12-slim-buster
 
 ENV ARGUS_DIRECTORY=/usr/local/argus
-ENV STATE_DIRECTORY=${ARGUS_DIRECTORY}/state
+ENV DATA_DIRECTORY=${ARGUS_DIRECTORY}/data
 
-RUN mkdir -p ${STATE_DIRECTORY}
+RUN mkdir -p ${DATA_DIRECTORY}
 
 COPY ./src ${ARGUS_DIRECTORY}/src
 COPY ./Dockerfile ${ARGUS_DIRECTORY}/Dockerfile
