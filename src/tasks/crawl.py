@@ -1,6 +1,6 @@
 from logging import Logger
 
-from src.resources.db import DBClient
+from src.resources.db import SqliteDbClient
 from src.resources.discogs import get_wantlist_ids
 from src.resources.logger import logger
 from src.resources.scraper import ListingsScraper
@@ -25,7 +25,7 @@ def crawl(
       * Write the current listings for the release to the state
     """
     user_secrets = secrets[user]
-    db = DBClient.from_config(secrets["db"])
+    db = SqliteDbClient()
     db.initialize_argus()
     telegram = TelegramBot(secrets["telegram_token"])
     try:

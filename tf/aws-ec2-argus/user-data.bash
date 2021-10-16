@@ -13,7 +13,7 @@ if [ "\$(docker ps -aq -f name=\$TARGET)" ]; then
   echo "Removing existing container for \${TARGET}"
     docker rm -f \$TARGET
 fi
-docker run --name \$TARGET -v \$TARGET:/usr/local/argus/state --restart=on-failure -d -t argus:latest python main.py --user \${TARGET}
+docker run --name \$TARGET -v \$TARGET:/usr/local/argus/data --restart=on-failure -d -t argus:latest python main.py --user \${TARGET}
 EOF
 cat >/usr/local/argus/update_argus.sh <<EOF
 #!/bin/bash

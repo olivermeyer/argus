@@ -1,5 +1,12 @@
 # argus
 
+## DB
+To avoid paying for an RDS instance, Argus uses SQLite and uses a .db file in
+`/usr/local/argus/data/`. This directory is persisted in a Docker volume to
+avoid having to re-create it at each run. This does however mean that, when
+provisioning a new host, Argus always re-creates the DB from scratch on the
+first run.
+
 ## Onboarding a new user
 1. Add user to the `--user` argument choices in `main.py`
 1. Get their Discogs API token and add it to `secrets.yaml`

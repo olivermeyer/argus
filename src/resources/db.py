@@ -1,82 +1,45 @@
 import os
+import sqlite3
+from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
-
-import psycopg2
-from psycopg2.extras import RealDictCursor
 
 from src.resources.logger import logger
 
 
-class DBClient:
-    def __init__(
-            self,
-            host: str,
-            db: str,
-            user: str,
-            pwd: str,
-            port: int = 5432,
-            logger: Logger = logger,
-    ) -> None:
-        self.host = host
-        self.db = db
-        self.user = user
-        self.pwd = pwd
-        self.port = port
-        self.conn = None
+DEFAULT_SQLITE_DB_LOCATION = os.path.join(
+    os.environ["DATA_DIRECTORY"], "argus.db"
+)
+
+
+class GenericDbClient(ABC):
+    """
+    Generic Argus database client.
+    """
+    def __init__(self, logger: Logger = logger):
         self.logger = logger
+        self.conn = None
 
-    @staticmethod
-    def from_config(config: dict) -> 'DBClient':
+    @abstractmethod
+    def connect(self):
         """
-        Initializes and returns a DBClient object.
+        Connects to the database and sets self.conn.
         """
-        return DBClient(
-            host=config["host"],
-            db=config["db"],
-            user=config["user"],
-            pwd=config["pwd"],
-            port=config["port"],
-        )
+        pass
 
-    def connect(self) -> None:
+    @abstractmethod
+    def close(self):
         """
-        Connects to the database.
+        Closes the connections to the database.
         """
-        self.logger.info(f"Connecting to {self.host}")
-        if not self.conn:
-            self.conn = psycopg2.connect(
-                host=self.host,
-                dbname=self.db,
-                user=self.user,
-                password=self.pwd,
-                port=self.port,
-            )
+        pass
 
-    def close(self) -> None:
-        """
-        Closes the connection to the database.
-        """
-        self.logger.info(f"Closing connection")
-        self.conn.close()
-
+    @abstractmethod
     def execute(self, query: str) -> List[dict]:
         """
-        Executes a query.
+        Takes a query and returns the results as a list of dictionaries.
         """
-        if not self.conn:
-            self.connect()
-        self.logger.debug(f"Executing query: {query}")
-        cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(query)
-        self.conn.commit()
-        try:
-            results = [dict(r) for r in cursor.fetchall()]
-            self.logger.debug(f"Got {len(results)} results")
-        except psycopg2.ProgrammingError:
-            results = None
-            self.logger.debug(f"No results")
-        return results
+        pass
 
     def initialize_argus(
             self,
@@ -106,7 +69,8 @@ class DBClient:
         Updates the wantlists table for the user.
         """
         self.logger.info(f"Updating wantlist for user {user}")
-        values = [f"('{user}', '{release_id}')" for release_id in release_ids]
+        values = [f"('{user}', '{release_id}')" for release_id in
+                  release_ids]
         query = f"""
 DELETE FROM wantlists WHERE username='{user}';
 INSERT INTO wantlists VALUES {', '.join(values)};"""
@@ -125,7 +89,7 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
         """
         Updates the listings for a release.
         """
-        self.logger.info(f"Updating listings for release {release_id}")
+        self.logger.debug(f"Updating listings for release {release_id}")
         if listings:
             values = []
             for listing in listings:
@@ -148,3 +112,37 @@ DELETE FROM listings WHERE release_id='{release_id}';
 INSERT INTO listings VALUES {', '.join(values)};
 """
         self.execute(query)
+
+
+class SqliteDbClient(GenericDbClient):
+    def __init__(
+            self,
+            db_location: str = DEFAULT_SQLITE_DB_LOCATION,
+            **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        self.db_location = db_location
+
+    def connect(self) -> None:
+        self.logger.info(f"Connecting to SQLite DB in {self.db_location}")
+        if not self.conn:
+            self.conn = sqlite3.connect(self.db_location)
+            # Set row_factory to enable name-based access to columns; see
+            # https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory
+            self.conn.row_factory = sqlite3.Row
+
+    def close(self) -> None:
+        self.logger.info(f"Closing SQLite connection")
+        self.conn.close()
+
+    def execute(self, query: str) -> List[dict]:
+        if not self.conn:
+            self.connect()
+        self.logger.debug(f"Executing query: {query}")
+        cursor = self.conn.cursor()
+        for statement in query.split(";"):
+            cursor.execute(statement)
+            self.conn.commit()
+        results = [dict(r) for r in cursor.fetchall()]
+        self.logger.debug(f"Got {len(results)} results")
+        return results

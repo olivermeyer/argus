@@ -5,5 +5,11 @@ CREATE TABLE IF NOT EXISTS wantlists (
 
 CREATE TABLE IF NOT EXISTS listings (
     release_id VARCHAR,
-    listing_id VARCHAR
+    listing_id VARCHAR,
+    title VARCHAR,
+    url VARCHAR,
+    media_condition VARCHAR,
+    sleeve_condition VARCHAR,
+    ships_from VARCHAR,
+    price VARCHAR
 );
