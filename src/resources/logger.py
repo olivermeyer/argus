@@ -6,7 +6,7 @@ def get_logger() -> logging.Logger:
     Configures and returns a logger.
     """
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.INFO)  # TODO: expose logging level in env var
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )

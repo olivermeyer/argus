@@ -1,9 +1,8 @@
 from logging import Logger
 
 from src.resources.db import SqliteDbClient
-from src.resources.discogs import get_wantlist_ids
+from src.resources.discogs import get_wantlist_ids, ListingsPage
 from src.resources.logger import logger
-from src.resources.scraper import ListingsScraper
 from src.resources.telegram import TelegramBot
 
 
@@ -35,7 +34,7 @@ def crawl(
             logger.info(f"Scanning {len(wantlist_ids)} releases")
             for release_id in wantlist_ids:
                 logger.info(f"Processing release {release_id}")
-                discogs_listings = ListingsScraper().scrape(release_id)
+                discogs_listings = ListingsPage().fetch(release_id)
                 db_listings = db.get_listing_ids(release_id)
                 if db_listings:
                     for listing in discogs_listings:
