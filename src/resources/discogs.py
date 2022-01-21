@@ -48,10 +48,20 @@ class ListingsPage:
     It's main entrypoint is fetch(), which returns a listings page parsed
     into a list of dictionaries, where each dictionary represents a listing.
     """
-    def __init__(self, logger: Logger = logger):
-        self.base_url = "https://discogs.com"
-        self.url_parameters = "?sort=listed%2Cdesc&limit=250"
+    BASE_URL = "https://discogs.com"
+    URL_PARAMETERS = "?sort=listed%2Cdesc&limit=250"
+
+    def __init__(self, release_id: str, logger: Logger = logger):
+        self.release_id = release_id
         self.logger = logger
+        self.raw_listings = None
+        self.listings = []
+
+    @property
+    def url(self):
+        return f"{ListingsPage.BASE_URL}" \
+               f"/sell/release/{self.release_id}" \
+               f"{ListingsPage.URL_PARAMETERS}"
 
     @retry(
         exceptions=(HTTPError, ChunkedEncodingError, ConnectionError),
@@ -60,20 +70,28 @@ class ListingsPage:
         backoff=2,
         logger=logger,
     )
-    def get_listings_from_discogs(self, release_id: str) -> ResultSet:
+    def _fetch_listings_from_discogs(self):
         """
         Gets ResultsSet containing the listings for the release.
         """
-        full_url = f"{self.base_url}" \
-                   f"/sell/release/{release_id}" \
-                   f"{self.url_parameters}"
-        self.logger.debug(f"Requesting {full_url}")
-        response = requests.get(full_url)
+        self.logger.debug(f"Requesting {self.url}")
+        response = requests.get(self.url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        return soup.find_all("tr", {"class": "shortcut_navigable"})
+        self.raw_listings = soup.find_all(
+            "tr", {"class": "shortcut_navigable"}
+        )
+        self.logger.debug(f"Found {len(self.raw_listings)} listings")
 
-    def parse_listing_to_dict(self, listing: ResultSet) -> dict:
+    def _parse_listings_to_dicts(self):
+        for listing in self.raw_listings:
+            self.logger.debug(f"Parsing listing:\n{listing}")
+            self.listings.append(
+                self._parse_listing_to_dict(listing)
+            )
+
+    @staticmethod
+    def _parse_listing_to_dict(listing: ResultSet) -> dict:
         """
         Parses a listing into a dictionary.
         """
@@ -82,8 +100,7 @@ class ListingsPage:
         )
         title = item_description_title.text
         href = item_description_title.attrs["href"]
-        url = f"{self.base_url}{href}"
-        self.logger.debug(f"Parsing listing with URL {url}")
+        url = f"{ListingsPage.BASE_URL}{href}"
         listing_id = href.split("/")[-1]
         item_condition = listing.find("p", {"class": "item_condition"})
         media_condition = item_condition.find_all("span")[2].text.strip()
@@ -105,13 +122,10 @@ class ListingsPage:
             "price": price,
         }
 
-    def fetch(self, release_id: str) -> List[dict]:
+    def fetch(self) -> List[dict]:
         """
         Returns a list of dictionaries with the listings for the release.
         """
-        listings = []
-        raw_listings = self.get_listings_from_discogs(release_id)
-        self.logger.debug(f"Found {len(raw_listings)} listings")
-        for listing in raw_listings:
-            listings.append(self.parse_listing_to_dict(listing))
-        return listings
+        self._fetch_listings_from_discogs()
+        self._parse_listings_to_dicts()
+        return self.listings
