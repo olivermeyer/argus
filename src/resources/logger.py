@@ -1,4 +1,5 @@
 import logging
+import os
 
 
 def get_logger() -> logging.Logger:
@@ -6,7 +7,7 @@ def get_logger() -> logging.Logger:
     Configures and returns a logger.
     """
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)  # TODO: expose logging level in env var
+    logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
