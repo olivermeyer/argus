@@ -34,7 +34,7 @@ def crawl(
             logger.info(f"Scanning {len(wantlist_ids)} releases")
             for release_id in wantlist_ids:
                 logger.info(f"Processing release {release_id}")
-                discogs_listings = ListingsPage().fetch(release_id)
+                discogs_listings = ListingsPage(release_id).fetch()
                 db_listings = db.get_listing_ids(release_id)
                 if db_listings:
                     for listing in discogs_listings:
