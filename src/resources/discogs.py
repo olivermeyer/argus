@@ -75,7 +75,9 @@ class ListingsPage:
         Gets ResultsSet containing the listings for the release.
         """
         self.logger.debug(f"Requesting {self.url}")
-        response = requests.get(self.url)
+        response = requests.get(
+            self.url, headers={'User-Agent': 'Mozilla/5.0'}
+        )
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         self.raw_listings = soup.find_all(
