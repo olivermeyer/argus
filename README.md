@@ -7,16 +7,16 @@ wantlists, pinging them whenever a release in their wantlist has a new listing.
 At a high level, Argus pulls a user's wantlist from the Discogs API and, for each
 release in the wantlist, scrapes its listings from the Discogs website and looks
 for new listings. Whenever a new listing is found, Argus sends a notification
-to the user on Telegram. And then starts over...
+to the user on Telegram.
 
 Argus is happy to help as many people as possible, and can easily run in parallel
 for several users. The only limitation will come from Discogs, who will eventually
 figure out that Argus has been snooping around their website. So far, so good.
 
 ## Where does Argus run?
-As of today, Argus runs on a small AWS EC2 instance, where each user gets their own
-Docker container. Argus knows that one day, when he's a grown app, he will run on
-Kubernetes; for now however, the 80/20 principle applies.
+As of today, Argus runs on a small AWS EC2 instance. Argus can accomplish one task:
+he can `crawl` a Discogs user's wantlist. He does this every so often, as defined
+by the EC2's root crontab.
 
 ## DB
 To avoid paying for an RDS instance, Argus uses SQLite and uses a .db file in
@@ -27,14 +27,14 @@ first run.
 
 ## Onboarding a new user
 1. Add user to the `--user` argument choices in `main.py`
-1. Get their Discogs API token and add it to `secrets.yaml`
-1. Get their chat ID
+2. Get their Discogs API token and add it to `secrets.yaml`
+3. Get their chat ID
     1. Have the new user start a conversation with `@ArcogsBot` on Telegram
-    1. Monitor the bot's [updates](https://api.telegram.org/bot1997819840:AAFlb7dYUy6m6hl0VIEiQHPWNx3laid2zKI/getUpdates)
+    2. Monitor the bot's [updates](https://api.telegram.org/bot1997819840:AAFlb7dYUy6m6hl0VIEiQHPWNx3laid2zKI/getUpdates)
        and get the chat ID for the conversation
-    1. Add the chat ID to `secrets.yaml`
-1. Add the user to `update_and_start.sh` in `user-data.bash`
-1. Deploy Argus
+    3. Add the chat ID to `secrets.yaml`
+4. Deploy Argus
+5. Add the user to the crontab
 
 ## Development
 Build the image locally:
@@ -56,3 +56,9 @@ A single Makefile target builds the image, pushes it to ECR, then pulls it to
 the EC2 instance and restarts the processes:
 
     make deploy
+
+## Troubleshooting
+To check the logs:
+
+    make ssh-connect
+    more /var/lib/docker/volumes/<user>_logs/_data/argus.log
