@@ -1,0 +1,1 @@
+*/5 * * * * docker run -v oli_data:/usr/local/argus/data -v oli_logs:/var/log/argus -t argus:latest python main.py --user oli --mode once
