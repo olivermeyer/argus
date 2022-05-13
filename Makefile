@@ -16,7 +16,7 @@ ssh-connect:  ## Connect to the instance
 	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com
 
 ssh-update-and-start:  ## Update and restart Argus remotely
-	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_and_start.sh'"
+	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_argus.sh'"
 
 deploy: build-push ssh-update-and-start  ## Build, push, update and restart Argus remotely
 
