@@ -1,3 +1,3 @@
-*/5 * * * * docker run -v oli_data:/usr/local/argus/data -v oli_logs:/var/log/argus -t argus:latest python main.py --user oli --mode once
-*/5 * * * * docker run -v pa_data:/usr/local/argus/data -v pa_logs:/var/log/argus -t argus:latest python main.py --user pa --mode once
-34 */6 * * * docker run -v ash_data:/usr/local/argus/data -v ash_logs:/var/log/argus -t argus:latest python main.py --user ash --mode once
+*/5 * * * * docker run -v oli_data:/usr/local/argus/data -v oli_logs:/var/log/argus -t argus:latest python main.py --user oli
+*/5 * * * * docker run -v pa_data:/usr/local/argus/data -v pa_logs:/var/log/argus -t argus:latest python main.py --user pa
+34 */6 * * * docker run -v ash_data:/usr/local/argus/data -v ash_logs:/var/log/argus -t argus:latest python main.py --user ash

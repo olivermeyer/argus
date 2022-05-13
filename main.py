@@ -11,11 +11,6 @@ parser.add_argument(
     choices=["oli", "pa", "ash"],
     required=True,
 )
-parser.add_argument(
-    "--mode",
-    choices=["once", "forever"],
-    required=True,
-)
 
 
 if __name__ == "__main__":
@@ -24,7 +19,6 @@ if __name__ == "__main__":
         crawl(
             secrets=secrets,
             user=args.user,
-            mode=args.mode,
         )
     except Exception as e:
         telegram = TelegramBot(secrets["telegram_token"])
