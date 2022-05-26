@@ -1,6 +1,7 @@
 import argparse
 
 from src.tasks.crawl import crawl
+from src.tasks.crawl_async import crawl_async
 from src.resources.telegram import TelegramBot
 from src.resources.secrets import secrets
 
@@ -11,15 +12,26 @@ parser.add_argument(
     choices=["oli", "pa", "ash"],
     required=True,
 )
+parser.add_argument(
+    "--asynchronous",
+    type=bool,
+    required=True,
+)
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
     try:
-        crawl(
-            secrets=secrets,
-            user=args.user,
-        )
+        if args.asynchronous:
+            crawl_async(
+                secrets=secrets,
+                user=args.user,
+            )
+        else:
+            crawl(
+                secrets=secrets,
+                user=args.user,
+            )
     except Exception as e:
         telegram = TelegramBot(secrets["telegram_token"])
         telegram.send_message(
