@@ -1,3 +1,3 @@
 */2 * * * * docker run -v oli_data:/usr/local/argus/data -v oli_logs:/var/log/argus -t argus:latest python main.py --user oli --task crawl_async
 */2 * * * * docker run -v pa_data:/usr/local/argus/data -v pa_logs:/var/log/argus -t argus:latest python main.py --user pa --task crawl_async
-34 */6 * * * docker run -v ash_data:/usr/local/argus/data -v ash_logs:/var/log/argus -t argus:latest python main.py --user ash
+34 */6 * * * docker run -v ash_data:/usr/local/argus/data -v ash_logs:/var/log/argus -t argus:latest python main.py --user ash --task crawl

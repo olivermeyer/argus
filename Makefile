@@ -6,7 +6,7 @@ build-latest:  ## Build with `latest` tag
 	docker build . -t argus:latest
 
 push-latest:  ## Push image with `latest` tag to ECR
-	aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 595687261518.dkr.ecr.eu-west-1.amazonaws.com
+	AWS_PROFILE=perso aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 595687261518.dkr.ecr.eu-west-1.amazonaws.com
 	docker tag argus:latest 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest
 	docker push 595687261518.dkr.ecr.eu-west-1.amazonaws.com/argus:latest
 
@@ -15,10 +15,13 @@ build-push: build-latest push-latest  ## Build and push with `latest` tag
 ssh-connect:  ## Connect to the instance
 	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com
 
-ssh-update:  ## Update Argus remotely
+ssh-update-argus:  ## Update Argus remotely
 	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_argus.sh'"
 
-deploy: build-push ssh-update  ## Build, push, update and restart Argus remotely
+ssh-update-crontab: ## Update the crontab remotely
+	cat crontab | ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'crontab -'"
+
+deploy: build-push ssh-update-argus ssh-update-crontab ## Build, push and update Argus remotely
 
 build-dev:  ## Build with `dev` tag
 	docker build . -t argus:dev
