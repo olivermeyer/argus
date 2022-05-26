@@ -16,7 +16,7 @@ class TelegramBot(telegram.Bot):
         """
         text = self.prepare_new_listing_message(listing)
         try:
-            self.send_message(chat_id, text, parse_mode='MarkdownV2')
+            self.send_message(chat_id, text, parse_mode="MarkdownV2")
         except telegram.error.BadRequest:
             raise RuntimeError(
                 f"Failed to send listing {listing['id']} to chat {chat_id}"
@@ -35,12 +35,14 @@ class TelegramBot(telegram.Bot):
             mc=self.short_condition(listing["media_condition"]),
             sc=self.short_condition(listing["sleeve_condition"]),
             p=listing["price"],
-            sf=listing["ships_from"]
+            sf=listing["ships_from"],
         )
         third_line = f"View on [Discogs]({listing['url']})"
-        return f"*{self.clean_string(first_line)}*\n" \
-               f"{self.clean_string(second_line)}\n" \
-               f"{third_line}"
+        return (
+            f"*{self.clean_string(first_line)}*\n"
+            f"{self.clean_string(second_line)}\n"
+            f"{third_line}"
+        )
 
     @staticmethod
     def short_condition(condition: str) -> str:
@@ -52,9 +54,7 @@ class TelegramBot(telegram.Bot):
         if "Generic" in condition:
             short_condition = "Gen"
         else:
-            short_condition = condition[
-                              condition.find("(") + 1:condition.find(")")
-                              ]
+            short_condition = condition[condition.find("(") + 1 : condition.find(")")]
         return short_condition
 
     @staticmethod
@@ -66,8 +66,24 @@ class TelegramBot(telegram.Bot):
         https://core.telegram.org/bots/api#sendmessage.
         """
         reserved_chars = [
-            "_", "*", "[", "]", "(", ")", "~", "`", ">",
-            "#", "+", "-", "=", "|", "{", "}", ".", "!",
+            "_",
+            "*",
+            "[",
+            "]",
+            "(",
+            ")",
+            "~",
+            "`",
+            ">",
+            "#",
+            "+",
+            "-",
+            "=",
+            "|",
+            "{",
+            "}",
+            ".",
+            "!",
         ]
         for char in reserved_chars:
             string = string.replace(char, f"\\{char}")

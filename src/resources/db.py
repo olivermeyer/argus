@@ -7,15 +7,14 @@ from typing import List
 from src.resources.logger import logger
 
 
-DEFAULT_SQLITE_DB_LOCATION = os.path.join(
-    os.environ["DATA_DIRECTORY"], "argus.db"
-)
+DEFAULT_SQLITE_DB_LOCATION = os.path.join(os.environ["DATA_DIRECTORY"], "argus.db")
 
 
 class GenericDbClient(ABC):
     """
     Generic Argus database client.
     """
+
     def __init__(self, logger: Logger = logger):
         self.logger = logger
         self.conn = None
@@ -41,36 +40,29 @@ class GenericDbClient(ABC):
         """
         pass
 
-    def initialize_argus(
-            self,
-            init_sql_path: str = ""
-    ) -> None:
+    def initialize_argus(self, init_sql_path: str = "") -> None:
         """
         Initializes the database for Argus.
         """
         self.logger.info("Initializing the DB")
         if not init_sql_path:
             init_sql_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "..",
-                "sql",
-                "init.sql"
+                os.path.dirname(os.path.abspath(__file__)), "..", "sql", "init.sql"
             )
         with open(init_sql_path, "r") as fh:
             sql = fh.read()
         self.execute(sql)
 
     def update_wantlist(
-            self,
-            user: str,
-            release_ids: List[str],
+        self,
+        user: str,
+        release_ids: List[str],
     ) -> None:
         """
         Updates the wantlists table for the user.
         """
         self.logger.info(f"Updating wantlist for user {user}")
-        values = [f"('{user}', '{release_id}')" for release_id in
-                  release_ids]
+        values = [f"('{user}', '{release_id}')" for release_id in release_ids]
         query = f"""
 DELETE FROM wantlists WHERE username='{user}';
 INSERT INTO wantlists VALUES {', '.join(values)};"""
@@ -115,11 +107,7 @@ INSERT INTO listings VALUES {', '.join(values)};
 
 
 class SqliteDbClient(GenericDbClient):
-    def __init__(
-            self,
-            db_location: str = DEFAULT_SQLITE_DB_LOCATION,
-            **kwargs
-    ) -> None:
+    def __init__(self, db_location: str = DEFAULT_SQLITE_DB_LOCATION, **kwargs) -> None:
         super().__init__(**kwargs)
         self.db_location = db_location
 
