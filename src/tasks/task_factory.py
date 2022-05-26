@@ -10,5 +10,5 @@ class TaskFactory:
     }
 
     @staticmethod
-    def create(task, user, secrets) -> AbstractTask:
+    def create(task: str, user: str, secrets: dict) -> AbstractTask:
         return TaskFactory.mapping[task](user, secrets)

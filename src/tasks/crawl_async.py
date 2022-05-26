@@ -48,7 +48,12 @@ class CrawlAsyncTask(AbstractTask):
             await asyncio.gather(*tasks)
 
     async def _process_release(
-        self, release_id: str, db, telegram, user_secrets, session
+        self,
+        release_id: str,
+        db: GenericDbClient,
+        telegram: TelegramBot,
+        user_secrets: dict,
+        session: ClientSession,
     ):
         """
         Asynchronously processes a single release.

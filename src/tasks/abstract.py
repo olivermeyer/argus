@@ -5,7 +5,7 @@ from src.resources.logger import logger
 
 
 class AbstractTask(ABC):
-    def __init__(self, user, secrets, logger: Logger = logger):
+    def __init__(self, user: str, secrets: dict, logger: Logger = logger):
         self.user = user
         self.secrets = secrets
         self.logger = logger
