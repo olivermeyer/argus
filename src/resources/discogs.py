@@ -23,18 +23,13 @@ from src.resources.logger import logger
     logger=logger,
 )
 def get_wantlist_ids(
-        discogs_token: str,
-        page_size: int = 100,
-        logger: Logger = logger
+    discogs_token: str, page_size: int = 100, logger: Logger = logger
 ) -> List[str]:
     """
     Returns the IDs in the wantlist for the account linked to the token.
     """
     logger.info("Fetching wantlist")
-    discogs = discogs_client.Client(
-        user_agent="Argus",
-        user_token=discogs_token
-    )
+    discogs = discogs_client.Client(user_agent="Argus", user_token=discogs_token)
     user = discogs.identity()
     wantlist = user.wantlist
     wantlist.per_page = page_size
@@ -48,6 +43,7 @@ class ListingsPage:
     It's main entrypoint is fetch(), which returns a listings page parsed
     into a list of dictionaries, where each dictionary represents a listing.
     """
+
     BASE_URL = "https://discogs.com"
     URL_PARAMETERS = "?sort=listed%2Cdesc&limit=250"
 
@@ -59,9 +55,11 @@ class ListingsPage:
 
     @property
     def url(self):
-        return f"{ListingsPage.BASE_URL}" \
-               f"/sell/release/{self.release_id}" \
-               f"{ListingsPage.URL_PARAMETERS}"
+        return (
+            f"{ListingsPage.BASE_URL}"
+            f"/sell/release/{self.release_id}"
+            f"{ListingsPage.URL_PARAMETERS}"
+        )
 
     @retry(
         exceptions=(HTTPError, ChunkedEncodingError, ConnectionError),
@@ -75,43 +73,33 @@ class ListingsPage:
         Gets ResultsSet containing the listings for the release.
         """
         self.logger.debug(f"Requesting {self.url}")
-        response = requests.get(
-            self.url, headers={'User-Agent': 'Mozilla/5.0'}
-        )
+        response = requests.get(self.url, headers={"User-Agent": "Mozilla/5.0"})
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        self.raw_listings = soup.find_all(
-            "tr", {"class": "shortcut_navigable"}
-        )
+        self.raw_listings = soup.find_all("tr", {"class": "shortcut_navigable"})
         self.logger.debug(f"Found {len(self.raw_listings)} listings")
 
     async def _fetch_listings_from_discogs_async(self, session):
         self.logger.debug(f"Requesting {self.url}")
         response = await session.request(
-            'get', self.url, headers={'User-Agent': 'Mozilla/5.0'}
+            "get", self.url, headers={"User-Agent": "Mozilla/5.0"}
         )
         response.raise_for_status()
         soup = BeautifulSoup(await response.text(), "html.parser")
-        self.raw_listings = soup.find_all(
-            "tr", {"class": "shortcut_navigable"}
-        )
+        self.raw_listings = soup.find_all("tr", {"class": "shortcut_navigable"})
         self.logger.debug(f"Found {len(self.raw_listings)} listings")
 
     def _parse_listings_to_dicts(self):
         for listing in self.raw_listings:
             self.logger.debug(f"Parsing listing:\n{listing}")
-            self.listings.append(
-                self._parse_listing_to_dict(listing)
-            )
+            self.listings.append(self._parse_listing_to_dict(listing))
 
     @staticmethod
     def _parse_listing_to_dict(listing: ResultSet) -> dict:
         """
         Parses a listing into a dictionary.
         """
-        item_description_title = listing.find(
-            "a", {"class": "item_description_title"}
-        )
+        item_description_title = listing.find("a", {"class": "item_description_title"})
         title = item_description_title.text
         href = item_description_title.attrs["href"]
         url = f"{ListingsPage.BASE_URL}{href}"

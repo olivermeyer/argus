@@ -27,6 +27,6 @@ if __name__ == "__main__":
         telegram = TelegramBot(secrets["telegram_token"])
         telegram.send_message(
             secrets["error_chat_id"],
-            f"[USER: {args.user}] {e.__class__.__name__}: {str(e)}"
+            f"[USER: {args.user}] {e.__class__.__name__}: {str(e)}",
         )
         raise
