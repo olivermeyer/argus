@@ -37,7 +37,7 @@ class CrawlAsyncTask(AbstractTask):
         user_secrets: dict,
     ):
         tasks = []
-        connector = TCPConnector(limit=10)
+        connector = TCPConnector(limit=50)
         async with ClientSession(connector=connector) as session:
             for release_id in wantlist_ids:
                 tasks.append(self._process_release(release_id, db, telegram, user_secrets, session))
