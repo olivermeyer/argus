@@ -85,6 +85,18 @@ class ListingsPage:
         )
         self.logger.debug(f"Found {len(self.raw_listings)} listings")
 
+    async def _fetch_listings_from_discogs_async(self, session):
+        self.logger.debug(f"Requesting {self.url}")
+        response = await session.request(
+            'get', self.url, headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        response.raise_for_status()
+        soup = BeautifulSoup(await response.text(), "html.parser")
+        self.raw_listings = soup.find_all(
+            "tr", {"class": "shortcut_navigable"}
+        )
+        self.logger.debug(f"Found {len(self.raw_listings)} listings")
+
     def _parse_listings_to_dicts(self):
         for listing in self.raw_listings:
             self.logger.debug(f"Parsing listing:\n{listing}")
@@ -129,5 +141,10 @@ class ListingsPage:
         Returns a list of dictionaries with the listings for the release.
         """
         self._fetch_listings_from_discogs()
+        self._parse_listings_to_dicts()
+        return self.listings
+
+    async def fetch_async(self, session) -> List[dict]:
+        await self._fetch_listings_from_discogs_async(session)
         self._parse_listings_to_dicts()
         return self.listings
