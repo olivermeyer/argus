@@ -85,19 +85,32 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
         if listings:
             values = []
             for listing in listings:
-                listing_id = listing["id"]
-                listing_title = listing["title"].replace("'", "")
-                listing_url = listing["url"]
-                listing_media_condition = listing["media_condition"]
-                listing_sleeve_condition = listing["sleeve_condition"]
-                listing_ships_from = listing["ships_from"]
-                listing_price = listing["price"]
                 values.append(
-                    f"('{release_id}', '{listing_id}', '{listing_title}', '{listing_url}', '{listing_media_condition}', '{listing_sleeve_condition}', '{listing_ships_from}', '{listing_price}')"
+                    f"""(
+'{release_id}',
+'{listing["id"]}',
+'{listing["title"].replace("'", "")}',
+'{listing["url"]}',
+'{listing["media_condition"]}',
+'{listing["sleeve_condition"]}',
+'{listing["ships_from"]}',
+'{listing["price"]}',
+'{listing["seller"]}'
+)"""
                 )
         else:
             values = [
-                f"('{release_id}', 'none', 'none', 'none', 'none', 'none', 'none', 'none')"
+                f"""(
+'{release_id}',
+'none',
+'none',
+'none',
+'none',
+'none',
+'none',
+'none',
+'none'
+)"""
             ]
         query = f"""
 DELETE FROM listings WHERE release_id='{release_id}';

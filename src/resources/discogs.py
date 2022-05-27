@@ -114,6 +114,7 @@ class ListingsPage:
         ships_from = seller_info.find_all("li")[2].text.split(":")[-1]
         item_price = listing.find("td", {"class": "item_price"})
         price = item_price.find("span", {"class": "price"}).text
+        seller = seller_info.find("div", {"class": "seller_block"}).find("a").text
         return {
             "title": title,
             "url": url,
@@ -122,6 +123,7 @@ class ListingsPage:
             "sleeve_condition": sleeve_condition,
             "ships_from": ships_from,
             "price": price,
+            "seller": seller,
         }
 
     def fetch(self) -> List[dict]:
