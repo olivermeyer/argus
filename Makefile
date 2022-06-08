@@ -13,13 +13,13 @@ push-latest:  ## Push image with `latest` tag to ECR
 build-push: build-latest push-latest  ## Build and push with `latest` tag
 
 ssh-connect:  ## Connect to the instance
-	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com
+	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com
 
 ssh-update-argus:  ## Update Argus remotely
-	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_argus.sh'"
+	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_argus.sh'"
 
 ssh-update-crontab: ## Update the crontab remotely
-	cat crontab | ssh -i "~/.ssh/argus.pem" ec2-user@ec2-52-211-134-220.eu-west-1.compute.amazonaws.com "sudo su -c 'crontab -'"
+	cat crontab | ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com "sudo su -c 'crontab -'"
 
 deploy: build-push ssh-update-argus ssh-update-crontab ## Build, push and update Argus remotely
 
