@@ -105,10 +105,13 @@ class ListingsPage:
         url = f"{ListingsPage.BASE_URL}{href}"
         listing_id = href.split("/")[-1]
         item_condition = listing.find("p", {"class": "item_condition"})
-        media_condition = item_condition.find_all("span")[2].text.strip()
+        media_condition_text = item_condition.find_all("span")[2].text.strip()
+        media_condition = ListingsPage._derive_condition(media_condition_text)
         try:
-            sleeve_condition = item_condition.find_all("span")[5].text.strip()
-        except IndexError:
+            sleeve_condition = item_condition.find(
+                "span", {"class": "item_sleeve_condition"}
+            ).text.strip()
+        except AttributeError:
             sleeve_condition = "None"
         seller_info = listing.find("td", {"class": "seller_info"})
         ships_from = seller_info.find_all("li")[2].text.split(":")[-1]
@@ -125,6 +128,24 @@ class ListingsPage:
             "price": price,
             "seller": seller,
         }
+
+    @staticmethod
+    def _derive_condition(text: str) -> str:
+        expected_conditions = [
+            "Mint (M)",
+            "Near Mint (NM or M-)",
+            "Very Good Plus (VG+)",
+            "Very Good (VG)",
+            "Good (G)",
+            "Good Plus (G+)",
+            "Poor (P)",
+            "Fair (F)",
+            "Generic",
+        ]
+        for condition in expected_conditions:
+            if condition in text:
+                return condition
+        raise ValueError(f"Couldn't derive a condition from text: {text}")
 
     def fetch(self) -> List[dict]:
         """
