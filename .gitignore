@@ -52,6 +52,7 @@ docs/_build/
 # Other
 .idea/
 secrets.yaml
+data/
 
 # Terraform
 .terraform/

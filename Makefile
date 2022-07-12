@@ -1,3 +1,5 @@
+IPV4_DNS=ec2-34-243-229-82.eu-west-1.compute.amazonaws.com
+
 help:  ## Show this message
 	# From https://gist.github.com/prwhite/8168133#gistcomment-3785627
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\033[36m\033[0m\n"} /^[$$()% 0-9a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -13,13 +15,13 @@ push-latest:  ## Push image with `latest` tag to ECR
 build-push: build-latest push-latest  ## Build and push with `latest` tag
 
 ssh-connect:  ## Connect to the instance
-	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com
+	ssh -i "~/.ssh/argus.pem" ec2-user@$(IPV4_DNS)
 
 ssh-update-argus:  ## Update Argus remotely
-	ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com "sudo su -c 'source /usr/local/argus/update_argus.sh'"
+	ssh -i "~/.ssh/argus.pem" ec2-user@$(IPV4_DNS) "sudo su -c 'source /usr/local/argus/update_argus.sh'"
 
 ssh-update-crontab: ## Update the crontab remotely
-	cat crontab | ssh -i "~/.ssh/argus.pem" ec2-user@ec2-34-241-212-134.eu-west-1.compute.amazonaws.com "sudo su -c 'crontab -'"
+	cat crontab | ssh -i "~/.ssh/argus.pem" ec2-user@$(IPV4_DNS) "sudo su -c 'crontab -'"
 
 deploy: build-push ssh-update-argus ssh-update-crontab ## Build, push and update Argus remotely
 
