@@ -5,9 +5,8 @@ from src.resources.logger import logger
 
 
 class AbstractTask(ABC):
-    def __init__(self, user: str, secrets: dict, logger: Logger = logger):
-        self.user = user
-        self.secrets = secrets
+    def __init__(self, config: dict, logger: Logger = logger):
+        self.config = config
         self.logger = logger
 
     @abstractmethod
