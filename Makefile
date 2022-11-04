@@ -27,6 +27,3 @@ deploy: build-push ssh-update-argus ssh-update-crontab ## Build, push and update
 
 build-dev:  ## Build with `dev` tag
 	docker build . -t argus:dev
-
-run-dev:  ## Enter the container with `dev` tag
-	docker run -v "$$(pwd)"/src:/usr/local/argus/src -v argus-data:/usr/local/argus/data -it argus:dev /bin/bash
