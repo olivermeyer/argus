@@ -15,26 +15,25 @@ figure out that Argus has been snooping around their website. So far, so good.
 
 ## Where does Argus run?
 As of today, Argus runs on a small AWS EC2 instance. Argus can accomplish one task:
-he can `crawl` a Discogs user's wantlist. He does this every so often, as defined
+he can `crawl_async` a Discogs user's wantlist. He does this every so often, as defined
 by the EC2's root crontab.
 
 ## DB
-To avoid paying for an RDS instance, Argus uses SQLite and uses a .db file in
-`/usr/local/argus/data/`. This directory is persisted in a Docker volume to
+Argus uses SQLite and uses a .db file in `/usr/local/argus/data/`.
+This directory is persisted in a Docker volume to
 avoid having to re-create it at each run. This does however mean that, when
 provisioning a new host, Argus always re-creates the DB from scratch on the
 first run.
 
 ## Onboarding a new user
-1. Add user to the `--user` argument choices in `main.py`
-2. Get their Discogs API token and add it to `secrets.yaml`
-3. Get their chat ID
+1. Get their Discogs API token and add it to the host's `/etc/environment` as `DISCOGS_TOKEN_<USER>`
+1. Get their chat ID
     1. Have the new user start a conversation with `@ArcogsBot` on Telegram
-    2. Monitor the bot's [updates](https://api.telegram.org/bot1997819840:AAFlb7dYUy6m6hl0VIEiQHPWNx3laid2zKI/getUpdates)
+    1. Monitor the bot's [updates](https://api.telegram.org/bot<token>/getUpdates)
        and get the chat ID for the conversation
-    3. Add the chat ID to `secrets.yaml`
-4. Deploy Argus
-5. Add the user to the crontab
+    1. Add the chat ID to the host's `/etc/environment` as `TELEGRAM_CHAT_ID_<USER`
+1. Add the user to the crontab (see other users for example)
+1. Deploy Argus: `make deploy`
 
 ## Development
 Build the image locally:
