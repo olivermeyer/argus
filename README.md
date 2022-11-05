@@ -26,12 +26,11 @@ provisioning a new host, Argus always re-creates the DB from scratch on the
 first run.
 
 ## Onboarding a new user
-1. Get their Discogs API token and add it to the host's `/etc/environment` as `DISCOGS_TOKEN_<USER>`
-1. Get their chat ID
-    1. Have the new user start a conversation with `@ArcogsBot` on Telegram
-    1. Monitor the bot's [updates](https://api.telegram.org/bot<token>/getUpdates)
-       and get the chat ID for the conversation
-    1. Add the chat ID to the host's `/etc/environment` as `TELEGRAM_CHAT_ID_<USER`
+1. Get the users's Discogs API token and Telegram chat ID
+   1. Have the new user start a conversation with `@ArcogsBot` on Telegram
+   1. Monitor the bot's [updates](https://api.telegram.org/bot<token>/getUpdates)
+      and get the chat ID for the conversation
+1. Add both secrets to the `argus` secret in AWS
 1. Add the user to the crontab (see other users for example)
 1. Deploy Argus: `make deploy`
 

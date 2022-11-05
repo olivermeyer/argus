@@ -1,12 +1,22 @@
 import os
-from logging import Logger
+import json
 
-from src.resources.logger import logger
+import boto3
 
 
-config = dict()
-config["user"] = os.environ["USER"]
-config["discogs_token"] = os.environ["DISCOGS_TOKEN"]
-config["telegram_token"] = os.environ["TELEGRAM_TOKEN"]
-config["telegram_chat_id"] = os.environ["TELEGRAM_CHAT_ID"]
-config["telegram_error_chat_id"] = os.environ["TELEGRAM_ERROR_CHAT_ID"]
+def get_config():
+    try:
+        client = boto3.client("secretsmanager", "eu-west-1")
+        secret = json.loads(client.get_secret_value(SecretId="argus")["SecretString"])
+        config = dict()
+        config["user"] = os.environ["USER"]
+        config["discogs_token"] = secret[os.environ["DISCOGS_TOKEN_KEY"]]
+        config["telegram_token"] = secret["telegram_token"]
+        config["telegram_chat_id"] = secret[os.environ["TELEGRAM_CHAT_ID_KEY"]]
+        config["telegram_chat_id_errors"] = secret["telegram_chat_id_errors"]
+        return config
+    except KeyError:
+        raise EnvironmentError(f"Missing environment variable")
+
+
+config = get_config()

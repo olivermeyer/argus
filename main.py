@@ -1,4 +1,3 @@
-import os
 import argparse
 
 from src.tasks.task_factory import TaskFactory
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     except Exception as e:
         telegram = TelegramBot(config["telegram_token"])
         telegram.send_message(
-            config["telegram_error_chat_id"],
+            config["telegram_chat_id_errors"],
             f"[USER: {config['user']}] {e.__class__.__name__}: {str(e)}",
         )
         raise
