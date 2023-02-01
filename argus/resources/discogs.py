@@ -11,7 +11,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ConnectionError
 from retry import retry
 
-from src.resources.logger import logger
+from argus.resources.logger import logger
 
 
 # user.wantlist can raise JSONDecodeError

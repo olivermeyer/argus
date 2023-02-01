@@ -1,5 +1,5 @@
-from src.tasks.abstract import AbstractTask
-from src.tasks.crawl_async import CrawlAsyncTask
+from argus.tasks.abstract import AbstractTask
+from argus.tasks.crawl_async import CrawlAsyncTask
 
 
 class TaskFactory:

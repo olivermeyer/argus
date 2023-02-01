@@ -1,8 +1,8 @@
 import argparse
 
-from src.tasks.task_factory import TaskFactory
-from src.resources.telegram import TelegramBot
-from src.resources.config import config
+from argus.tasks.task_factory import TaskFactory
+from argus.resources.telegram import TelegramBot
+from argus.resources.config import config
 
 
 parser = argparse.ArgumentParser()

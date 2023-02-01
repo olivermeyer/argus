@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
 
-from src.resources.logger import logger
+from argus.resources.logger import logger
 
 
 DEFAULT_SQLITE_DB_LOCATION = os.path.join(os.environ["DATA_DIRECTORY"], "argus.db")

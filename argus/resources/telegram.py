@@ -2,7 +2,7 @@ from logging import Logger
 
 import telegram
 
-from src.resources.logger import logger
+from argus.resources.logger import logger
 
 
 class TelegramBot(telegram.Bot):
