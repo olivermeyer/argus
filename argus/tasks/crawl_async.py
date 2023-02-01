@@ -1,9 +1,9 @@
 import asyncio
 
-from src.resources.db import SqliteDbClient, GenericDbClient
-from src.resources.discogs import get_wantlist_ids, ListingsPage
-from src.resources.telegram import TelegramBot
-from src.tasks.abstract import AbstractTask
+from argus.resources.db import SqliteDbClient, GenericDbClient
+from argus.resources.discogs import get_wantlist_ids, ListingsPage
+from argus.resources.telegram import TelegramBot
+from argus.tasks.abstract import AbstractTask
 
 from aiohttp import ClientSession, TCPConnector
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from logging import Logger
 
-from src.resources.logger import logger
+from argus.resources.logger import logger
 
 
 class AbstractTask(ABC):
