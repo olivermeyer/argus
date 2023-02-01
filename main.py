@@ -1,21 +1,20 @@
-import argparse
+import click
 
 from argus.tasks.task_factory import TaskFactory
 from argus.resources.telegram import TelegramBot
-from argus.resources.config import config
+from argus.resources.config import get_config
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--task",
-    choices=["crawl_async"],
-    required=True,
-)
+@click.group()
+def argus():
+    pass
 
 
-if __name__ == "__main__":
-    args = parser.parse_args()
-    task = TaskFactory.create(args.task, config=config)
+@click.command()
+@click.option("--user", required=True)
+def crawl_async(user: str) -> None:
+    config = get_config(user)
+    task = TaskFactory.create("crawl_async", config=config)
     try:
         task.execute()
     except Exception as e:
@@ -25,3 +24,20 @@ if __name__ == "__main__":
             f"[USER: {config['user']}] {e.__class__.__name__}: {str(e)}",
         )
         raise
+
+
+@click.command()
+@click.option("--user", required=True)
+@click.option("--list_id", required=True)
+@click.option("--sellers", default=10)
+def scrape_list(user: str, list_id: str, sellers: int) -> None:
+    config = get_config(user)
+    task = TaskFactory.create("scrape_list", config=config, list_id=list_id, sellers=sellers)
+    task.execute()
+
+
+argus.add_command(crawl_async)
+argus.add_command(scrape_list)
+
+if __name__ == "__main__":
+    argus()
