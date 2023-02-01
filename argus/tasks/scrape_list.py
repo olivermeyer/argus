@@ -15,6 +15,7 @@ class ScrapeListTask(AbstractTask):
         self.sellers = self.kwargs["sellers"]
 
     def execute(self):
+        # TODO: make this async
         release_ids = get_list_release_ids(discogs_token=self.config["discogs_token"], list_id=self.list_id)
         sellers = defaultdict(int)
         for release_id in release_ids:
