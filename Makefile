@@ -29,7 +29,7 @@ build-dev:  ## Build with `dev` tag
 	docker build . -t argus:dev
 
 crawl-dev:  ## Run with `dev` tag
-	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py crawl-async --user om93'
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py crawl-wantlist --user om93'
 
 bash-dev:  ## Bash with `dev` tag
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash

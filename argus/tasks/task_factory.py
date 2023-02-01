@@ -1,11 +1,11 @@
 from argus.tasks.abstract import AbstractTask
-from argus.tasks.crawl_async import CrawlAsyncTask
+from argus.tasks.crawl_wantlist import CrawlWantlistTask
 from argus.tasks.scrape_list import ScrapeListTask
 
 
 class TaskFactory:
     mapping = {
-        "crawl_async": CrawlAsyncTask,
+        "crawl_wantlist": CrawlWantlistTask,
         "scrape_list": ScrapeListTask,
     }
 

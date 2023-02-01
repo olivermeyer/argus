@@ -12,9 +12,9 @@ def argus():
 
 @click.command()
 @click.option("--user", required=True)
-def crawl_async(user: str) -> None:
+def crawl_wantlist(user: str) -> None:
     config = get_config(user)
-    task = TaskFactory.create("crawl_async", config=config)
+    task = TaskFactory.create("crawl_wantlist", config=config)
     try:
         task.execute()
     except Exception as e:
@@ -36,7 +36,7 @@ def scrape_list(user: str, list_id: str, sellers: int) -> None:
     task.execute()
 
 
-argus.add_command(crawl_async)
+argus.add_command(crawl_wantlist)
 argus.add_command(scrape_list)
 
 if __name__ == "__main__":

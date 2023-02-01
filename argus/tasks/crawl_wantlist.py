@@ -8,7 +8,7 @@ from argus.tasks.abstract import AbstractTask
 from aiohttp import ClientSession, TCPConnector
 
 
-class CrawlAsyncTask(AbstractTask):
+class CrawlWantlistTask(AbstractTask):
     def execute(self):
         db = SqliteDbClient()
         db.initialize_argus()
