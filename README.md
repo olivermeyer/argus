@@ -15,8 +15,15 @@ figure out that Argus has been snooping around their website. So far, so good.
 
 ## Where does Argus run?
 As of today, Argus runs on a small AWS EC2 instance. Argus can accomplish one task:
-he can `crawl_async` a Discogs user's wantlist. He does this every so often, as defined
-by the EC2's root crontab.
+he can `crawl_wantlist`, which... crawls a Discogs user's wantlist.
+He does this every so often, as defined by the EC2's root crontab.
+
+### List scraper
+Argus comes with a neat little utility which, given a list ID, will return the
+sellers with the most listings for releases in that list. Usage example below:
+
+   make bash-dev
+   AWS_PROFILE=perso python main.py scrape-list --user om93-wants --list_id 574693
 
 ## DB
 Argus uses SQLite and uses a .db file in `/usr/local/argus/data/`.

@@ -36,6 +36,15 @@ def get_wantlist_ids(
     return [str(item.id) for item in wantlist]
 
 
+def get_list_release_ids(discogs_token: str, list_id: int, logger: Logger = logger) -> List[int]:
+    """
+    Returns the IDs in the list.
+    """
+    logger.info(f"Fetching releases in list {list_id}")
+    discogs = discogs_client.Client(user_agent="Argus", user_token=discogs_token)
+    return [item.id for item in discogs.list(list_id).items]
+
+
 class ListingsPage:
     """
     This class represents a Discogs listings page.

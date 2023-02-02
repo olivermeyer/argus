@@ -28,8 +28,8 @@ deploy: build-push ssh-update-argus ssh-update-crontab ## Build, push and update
 build-dev:  ## Build with `dev` tag
 	docker build . -t argus:dev
 
-run-dev:  ## Run with `dev` tag
-	docker run -v "$$(pwd)"/src:/usr/local/argus/src -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -e DISCOGS_TOKEN_KEY=discogs_token_oli -e TELEGRAM_CHAT_ID_KEY=telegram_chat_id_oli -e USER=oli -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py --task=crawl_async'
+crawl-dev:  ## Run with `dev` tag
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py crawl-wantlist --user om93'
 
 bash-dev:  ## Bash with `dev` tag
-	docker run -v "$$(pwd)"/src:/usr/local/argus/src -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -e DISCOGS_TOKEN_KEY=discogs_token_oli -e TELEGRAM_CHAT_ID_KEY=telegram_chat_id_oli -e USER=oli -it argus:dev /bin/bash
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash
