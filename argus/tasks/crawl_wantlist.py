@@ -1,11 +1,11 @@
 import asyncio
 
+from aiohttp import ClientSession, TCPConnector
+
 from argus.resources.db import SqliteDbClient, GenericDbClient
 from argus.resources.discogs import get_wantlist_ids, ListingsPage
 from argus.resources.telegram import TelegramBot
 from argus.tasks.abstract import AbstractTask
-
-from aiohttp import ClientSession, TCPConnector
 
 
 class CrawlWantlistTask(AbstractTask):
