@@ -22,8 +22,8 @@ He does this every so often, as defined by the EC2's root crontab.
 Argus comes with a neat little utility which, given a list ID, will return the
 sellers with the most listings for releases in that list. Usage example below:
 
-   make bash-dev
-   AWS_PROFILE=perso python main.py scrape-list --user om93-wants --list_id 574693
+      make bash-dev
+      AWS_PROFILE=perso python main.py scrape-list --user om93-wants --list_id 574693
 
 ## DB
 Argus uses SQLite and uses a .db file in `/usr/local/argus/data/`.
