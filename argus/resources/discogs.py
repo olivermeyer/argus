@@ -4,6 +4,7 @@ from logging import Logger
 from typing import List
 
 import discogs_client
+from aiohttp import ClientResponseError
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 from requests.exceptions import HTTPError
@@ -71,7 +72,7 @@ class ListingsPage:
         )
 
     @retry(
-        exceptions=(HTTPError, ChunkedEncodingError, ConnectionError),
+        exceptions=(HTTPError, ChunkedEncodingError, ConnectionError, ClientResponseError),
         delay=1,
         tries=3,
         backoff=2,
