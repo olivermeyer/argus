@@ -17,8 +17,8 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
     file_handler = RotatingFileHandler(
         filename=os.path.join(os.environ["LOG_DIRECTORY"], "argus.log"),
-        maxBytes=50000,
-        backupCount=2,
+        maxBytes=10*1024*1024,
+        backupCount=5,
     )
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
