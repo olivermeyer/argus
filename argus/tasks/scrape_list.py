@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from aiohttp import ClientSession, TCPConnector
 
-from argus.resources.discogs import get_list_release_ids, ListingsPage
+from argus.resources.discogs import ListingsPage
 from argus.tasks.abstract import AbstractTask
 
 
@@ -17,7 +17,7 @@ class ScrapeListTask(AbstractTask):
         self.sellers = self.kwargs["sellers"]
 
     def execute(self):
-        release_ids = get_list_release_ids(discogs_token=self.config["discogs_token"], list_id=self.list_id)
+        release_ids = self._get_list_release_ids(list_id=self.list_id)
         sellers = defaultdict(int)
         listings = asyncio.run(self._execute_async(release_ids))
         listings = [listing for sublist in listings for listing in sublist]
@@ -29,6 +29,13 @@ class ScrapeListTask(AbstractTask):
             print(seller[0])
             print(f"  url: {seller[1]['url']}")
             print(f"  items: {seller[1]['items']}")
+
+    def _get_list_release_ids(self, list_id: int) -> list[int]:
+        """
+        Returns the IDs in the list.
+        """
+        self.logger.info(f"Fetching releases in list {list_id}")
+        return [item.id for item in self.discogs_client.list(list_id).items]
 
     async def _execute_async(self, release_ids):
         tasks = []
