@@ -1,10 +1,12 @@
 import asyncio
 from json import JSONDecodeError
+from typing import List
 
 from aiohttp import ClientSession, TCPConnector
 from retry import retry
 
-from argus.resources.db import SqliteDbClient, GenericDbClient
+from argus.resources.db.generic import GenericDbClient
+from argus.resources.db.sqlite import SqliteDbClient
 from argus.resources.discogs import ListingsPage
 from argus.resources.telegram import TelegramBot
 from argus.tasks.abstract import AbstractTask
@@ -37,7 +39,7 @@ class CrawlWantlistTask(AbstractTask):
         tries=3,
         backoff=2,
     )
-    def _get_wantlist_ids(self, page_size: int = 100) -> list[str]:
+    def _get_wantlist_ids(self, page_size: int = 100) -> List[str]:
         """
         Returns the IDs in the wantlist for the account linked to the token.
         """

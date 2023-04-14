@@ -1,5 +1,6 @@
 import asyncio
 from collections import defaultdict
+from typing import List
 
 from aiohttp import ClientSession, TCPConnector
 
@@ -30,7 +31,7 @@ class ScrapeListTask(AbstractTask):
             print(f"  url: {seller[1]['url']}")
             print(f"  items: {seller[1]['items']}")
 
-    def _get_list_release_ids(self, list_id: int) -> list[int]:
+    def _get_list_release_ids(self, list_id: int) -> List[int]:
         """
         Returns the IDs in the list.
         """
