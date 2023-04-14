@@ -32,7 +32,7 @@ bash-dev:  ## Bash with `dev` tag
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash
 
 crawl-wantlist:  ## Crawl wantlist for user om93
-	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py crawl-wantlist --user om93'
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso argus crawl-wantlist --user om93'
 
 clean-lists:  ## Clean lists for user om93-wants
-	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso python main.py clean-lists --user om93-wants'
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'AWS_PROFILE=perso argus clean-lists --user om93-wants'
