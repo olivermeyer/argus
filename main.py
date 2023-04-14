@@ -36,8 +36,17 @@ def scrape_list(user: str, list_id: str, sellers: int) -> None:
     task.execute()
 
 
+@click.command()
+@click.option("--user", required=True)
+def clean_lists(user: str) -> None:
+    config = get_config(user)
+    task = TaskFactory.create("clean_lists", config=config)
+    task.execute()
+
+
 argus.add_command(crawl_wantlist)
 argus.add_command(scrape_list)
+argus.add_command(clean_lists)
 
 if __name__ == "__main__":
     argus()

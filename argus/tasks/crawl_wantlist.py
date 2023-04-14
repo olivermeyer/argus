@@ -1,9 +1,11 @@
 import asyncio
+from json import JSONDecodeError
 
 from aiohttp import ClientSession, TCPConnector
+from retry import retry
 
 from argus.resources.db import SqliteDbClient, GenericDbClient
-from argus.resources.discogs import get_wantlist_ids, ListingsPage
+from argus.resources.discogs import ListingsPage
 from argus.resources.telegram import TelegramBot
 from argus.tasks.abstract import AbstractTask
 
@@ -14,7 +16,7 @@ class CrawlWantlistTask(AbstractTask):
         db.initialize_argus()
         telegram = TelegramBot(self.config["telegram_token"])
         try:
-            wantlist_ids = get_wantlist_ids(self.config["discogs_token"])
+            wantlist_ids = self._get_wantlist_ids()
             db.update_wantlist(user=self.config["user"], release_ids=wantlist_ids)
             self.logger.info(f"Scanning {len(wantlist_ids)} releases")
             asyncio.run(
@@ -27,6 +29,23 @@ class CrawlWantlistTask(AbstractTask):
             )
         finally:
             db.close()
+
+    # user.wantlist can raise JSONDecodeError
+    @retry(
+        exceptions=JSONDecodeError,
+        delay=1,
+        tries=3,
+        backoff=2,
+    )
+    def _get_wantlist_ids(self, page_size: int = 100) -> list[str]:
+        """
+        Returns the IDs in the wantlist for the account linked to the token.
+        """
+        self.logger.info("Fetching wantlist")
+        user = self.discogs_client.identity()
+        wantlist = user.wantlist
+        wantlist.per_page = page_size
+        return [str(item.id) for item in wantlist]
 
     async def _crawl_async(
         self,
