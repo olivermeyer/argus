@@ -12,4 +12,4 @@ COPY . ${ARGUS_DIRECTORY}/
 
 WORKDIR ${ARGUS_DIRECTORY}
 
-RUN pip install --no-cache .
+RUN pip install --no-cache -e .

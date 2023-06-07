@@ -2,13 +2,9 @@ import requests
 from logging import Logger
 from typing import List
 
-from aiohttp import ClientResponseError
+from aiohttp_retry import RetryClient
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-from requests.exceptions import HTTPError
-from requests.exceptions import ChunkedEncodingError
-from requests.exceptions import ConnectionError
-from retry import retry
 
 from argus.resources.logger import logger
 
@@ -38,13 +34,6 @@ class ListingsPage:
             f"{ListingsPage.URL_PARAMETERS}"
         )
 
-    @retry(
-        exceptions=(HTTPError, ChunkedEncodingError, ConnectionError, ClientResponseError),
-        delay=1,
-        tries=3,
-        backoff=2,
-        logger=logger,
-    )
     def _fetch_listings_from_discogs(self):
         """
         Gets ResultsSet containing the listings for the release.
@@ -58,9 +47,8 @@ class ListingsPage:
 
     async def _fetch_listings_from_discogs_async(self, session):
         self.logger.debug(f"Requesting {self.url}")
-        response = await session.request(
-            "get", self.url, headers={"User-Agent": "Mozilla/5.0"}
-        )
+        retry_client = RetryClient(client_session=session)
+        response = await retry_client.get(url=self.url, headers={"User-Agent": "Mozilla/5.0"})
         response.raise_for_status()
         soup = BeautifulSoup(await response.text(), "html.parser")
         self.raw_listings = soup.find_all("tr", {"class": "shortcut_navigable"})
