@@ -39,7 +39,7 @@ class CrawlWantlistTask(AbstractTask):
         tries=3,
         backoff=2,
     )
-    def _get_wantlist_ids(self, page_size: int = 100) -> List[str]:
+    def _get_wantlist_ids(self, page_size: int = 100, limit: int = 100) -> List[str]:
         """
         Returns the IDs in the wantlist for the account linked to the token.
         """
@@ -47,7 +47,14 @@ class CrawlWantlistTask(AbstractTask):
         user = self.discogs_client.identity()
         wantlist = user.wantlist
         wantlist.per_page = page_size
-        return [str(item.id) for item in wantlist]
+        if len(wantlist) > limit:
+            self.logger.warning(f"Wantlist has {len(wantlist)} elements, keeping only {limit}")
+        wantlist_ids = []
+        index = 0
+        while len(wantlist_ids) < min(len(wantlist), limit):
+            wantlist_ids.append(str(wantlist[index].id))
+            index += 1
+        return wantlist_ids
 
     async def _crawl_async(
         self,
