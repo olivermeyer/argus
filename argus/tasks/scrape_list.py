@@ -4,7 +4,7 @@ from typing import List
 
 from aiohttp import ClientSession, TCPConnector
 
-from argus.resources.discogs import ListingsPage
+from argus.resources.web.discogs import ListingsPage
 from argus.tasks.abstract import AbstractTask
 
 

@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
 
-from argus.resources.logger import logger
+from argus.objects.logger import logger
 
 
-class GenericDbClient(ABC):
+class GenericSqlClient(ABC):
     """
     Generic Argus database client.
     """
@@ -43,7 +43,7 @@ class GenericDbClient(ABC):
         self.logger.info("Initializing the DB")
         if not init_sql_path:
             init_sql_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "init.sql"
+                os.path.dirname(os.path.abspath(__file__)), "../init.sql"
             )
         with open(init_sql_path, "r") as fh:
             sql = fh.read()

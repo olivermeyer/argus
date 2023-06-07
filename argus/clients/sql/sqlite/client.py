@@ -2,13 +2,13 @@ import os
 import sqlite3
 from typing import List
 
-from argus.resources.db.generic import GenericDbClient
+from argus.clients.sql.generic.client import GenericSqlClient
 
 
 DEFAULT_SQLITE_DB_LOCATION = os.path.join(os.environ["DATA_DIRECTORY"], "argus.db")
 
 
-class SqliteDbClient(GenericDbClient):
+class SqliteClient(GenericSqlClient):
     def __init__(self, db_location: str = DEFAULT_SQLITE_DB_LOCATION, **kwargs) -> None:
         super().__init__(**kwargs)
         self.db_location = db_location
