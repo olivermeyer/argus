@@ -4,7 +4,7 @@ from logging import Logger
 from typing import Optional
 
 from discogs_client.client import Client
-from discogs_client.models import User, Wantlist
+from discogs_client.models import User, Wantlist, Release, List
 from retry import retry
 
 from argus.objects import logger
@@ -20,7 +20,6 @@ class DiscogsApiClient:
     def __post_init__(self) -> None:
         self.client = Client(user_agent="Argus", user_token=self.token)
 
-    @property
     def identity(self) -> User:
         if not self._identity:
             self._identity = self.client.identity()
@@ -28,7 +27,13 @@ class DiscogsApiClient:
 
     @property
     def wantlist(self) -> Wantlist:
-        return self.identity.wantlist
+        return self.identity().wantlist
+
+    def release(self, release_id: int) -> Release:
+        return self.client.release(release_id)
+
+    def list(self, list_id: int) -> List:
+        return self.client.list(list_id)
 
     @retry(
         exceptions=JSONDecodeError,  # user.wantlist can raise JSONDecodeError

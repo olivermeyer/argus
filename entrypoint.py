@@ -1,13 +1,14 @@
 import click
 
 # from argus.tasks.task_factory import TaskFactory
-from argus.tasks.crawl_wantlist import CrawlWantlistTask
 from argus.clients.sql.sqlite.client import SqliteClient
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
-from argus.objects.discogs.listings import ListingsPageParser
+from argus.objects.discogs.release_listings import ReleaseListingsPageParser
 from argus.objects.config import get_config
+from argus.tasks.crawl_wantlist import CrawlWantlistTask
+from argus.tasks.find_non_master_releases_in_list import FindNonMasterReleasesInListTask
 
 
 @click.group()
@@ -23,7 +24,7 @@ def crawl_wantlist(user: str) -> None:
         db_client=SqliteClient(),
         discogs_api_client=DiscogsApiClient(token=config["discogs_token"]),
         discogs_web_client=DiscogsWebClient(),
-        listings_page_parser=ListingsPageParser(),
+        listings_page_parser=ReleaseListingsPageParser(),
         telegram_client=TelegramClient(
             token=config["telegram_token"], chat_id=config["telegram_chat_id"]
         ),
@@ -54,18 +55,20 @@ argus.add_command(crawl_wantlist)
 #     config = get_config(user)
 #     task = TaskFactory.create("scrape_list", config=config, list_id=list_id, sellers=sellers)
 #     task.execute()
-#
-#
-# @click.command()
-# @click.option("--user", required=True)
-# def clean_lists(user: str) -> None:
-#     config = get_config(user)
-#     task = TaskFactory.create("clean_lists", config=config)
-#     task.execute()
 
 
-# argus.add_command(scrape_list)
-# argus.add_command(clean_lists)
+@click.command()
+@click.option("--user", required=True)
+def clean_lists(user: str) -> None:
+    config = get_config(user)
+    task = FindNonMasterReleasesInListTask(
+        discogs_api_client=DiscogsApiClient(token=config["discogs_token"])
+    )
+    task.execute()
+
+
+argus.add_command(clean_lists)
+
 
 if __name__ == "__main__":
     argus()

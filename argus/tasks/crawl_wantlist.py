@@ -7,7 +7,7 @@ from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
 from argus.objects.logger import logger
-from argus.objects.discogs.listings import ListingsPageParser
+from argus.objects.discogs.release_listings import ReleaseListingsPageParser
 
 
 @dataclass
@@ -15,7 +15,7 @@ class CrawlWantlistTask:
     db_client: GenericSqlClient
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
-    listings_page_parser: ListingsPageParser
+    listings_page_parser: ReleaseListingsPageParser
     telegram_client: TelegramClient
     user: str
     logger: Logger = logger
@@ -61,7 +61,7 @@ class CrawlWantlistTask:
         """
         self.logger.info(f"Processing release {release_id}")
         discogs_listings = self.listings_page_parser.parse_listings(
-            page_text=await self.discogs_web_client.get_listings_page(release_id=release_id)
+            page_text=await self.discogs_web_client.get_release_listings_page(release_id=release_id)
         )
         db_listings = self.db_client.get_listing_ids(release_id)
         if db_listings:

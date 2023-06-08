@@ -9,7 +9,7 @@ from argus.objects import logger
 
 
 @dataclass
-class ListingsPageParser:
+class MasterListingsPageParser:
     logger: Logger = field(default=logger)
 
     def parse_listings(self, page_text: str) -> List[dict]:
