@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from logging import Logger
 from typing import List
 
-from aiohttp import ClientSession, TCPConnector
-
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.objects.discogs.master_listings import MasterListingsPageParser
@@ -16,6 +14,8 @@ from argus.objects.logger import logger
 class ScrapeListTask:
     """
     This task is used to find the sellers with the highest number of listings for the releases in a list.
+
+    TODO: this gets listings for releases, not masters
     """
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
@@ -58,6 +58,6 @@ class ScrapeListTask:
     async def _get_listings_for_release(self, release_id):
         self.logger.info(f"Processing release {release_id}")
         listings = self.listings_page_parser.parse_listings(
-            page_text=await self.discogs_web_client.get_master_listings_page(release_id=release_id)
+            page_text=await self.discogs_web_client.get_master_listings_page(master_id=release_id)
         )
         return listings

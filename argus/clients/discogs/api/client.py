@@ -7,7 +7,7 @@ from discogs_client.client import Client
 from discogs_client.models import User, Wantlist, Release, List
 from retry import retry
 
-from argus.objects import logger
+from argus.objects.logger import logger
 
 
 @dataclass
@@ -41,7 +41,7 @@ class DiscogsApiClient:
         tries=3,
         backoff=2,
     )
-    def get_wantlist_ids(self, page_size: int = 100, pages: int = 1) -> list[str]:
+    def get_wantlist_ids(self, page_size: int = 100, pages: int = 1) -> list:
         """
         Returns the IDs in the wantlist for the account linked to the token.
 

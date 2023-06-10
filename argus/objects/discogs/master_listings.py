@@ -5,7 +5,7 @@ from typing import List
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from argus.objects import logger
+from argus.objects.logger import logger
 
 
 @dataclass
