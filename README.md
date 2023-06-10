@@ -23,7 +23,7 @@ Argus comes with a neat little utility which, given a list ID, will return the
 sellers with the most listings for releases in that list. Usage example below:
 
       make bash-dev
-      AWS_PROFILE=perso argus scrape-list --user om93-wants --list_id 574693
+      AWS_PROFILE=perso python entrypoint.py scrape-list --user om93-wants --list_id 574693
 
 ## DB
 Argus uses SQLite and uses a .db file in `/usr/local/argus/data/`.

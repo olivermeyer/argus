@@ -1,25 +1,34 @@
+from dataclasses import dataclass, field
 from logging import Logger
 
 import telegram
 
-from argus.resources.logger import logger
+from argus.objects.logger import logger
 
 
-class TelegramBot(telegram.Bot):
-    def __init__(self, token: str, logger: Logger = logger, **kwargs):
-        self.logger = logger
-        super(TelegramBot, self).__init__(token, **kwargs)
+@dataclass
+class TelegramClient:
+    """
+    Class representing a Telegram client.
+    """
+    bot: telegram.Bot = field(init=False)
+    token: str
+    chat_id: int
+    logger: Logger = logger
 
-    def send_new_listing_message(self, chat_id: int, listing: dict) -> None:
+    def __post_init__(self):
+        self.bot = telegram.Bot(token=self.token)
+
+    def send_new_listing_message(self, listing: dict) -> None:
         """
         Prepares and sends a message for a new listing.
         """
         text = self.prepare_new_listing_message(listing)
         try:
-            self.send_message(chat_id, text, parse_mode="MarkdownV2")
+            self.bot.send_message(self.chat_id, text, parse_mode="MarkdownV2")
         except telegram.error.BadRequest:
             raise RuntimeError(
-                f"Failed to send listing {listing['id']} to chat {chat_id}"
+                f"Failed to send listing {listing['id']} to chat {self.chat_id}"
             )
 
     def prepare_new_listing_message(self, listing: dict) -> str:

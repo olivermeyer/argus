@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 from logging import Logger
 import discogs_client
 
-from argus.resources.logger import logger
-
 
 class AbstractTask(ABC):
+    config: dict
+    logger: Logger
+
     def __init__(self, config: dict, logger: Logger = logger, **kwargs):
         self.config = config
         self.logger = logger
