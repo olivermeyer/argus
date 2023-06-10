@@ -17,4 +17,5 @@ RUN pip install poetry && \
 
 RUN poetry install
 
+COPY entrypoint.py ${ARGUS_DIRECTORY}/entrypoint.py
 COPY argus ${ARGUS_DIRECTORY}/argus
