@@ -10,7 +10,7 @@ RUN mkdir -p ${LOG_DIRECTORY}
 
 WORKDIR ${ARGUS_DIRECTORY}
 
-COPY pyproject.toml ${ARGUS_DIRECTORY}/pyproject.toml
+COPY pyproject.toml poetry.lock ${ARGUS_DIRECTORY}/
 
 RUN pip install poetry && \
     poetry config virtualenvs.create false
