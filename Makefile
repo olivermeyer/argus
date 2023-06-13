@@ -1,4 +1,4 @@
-IPV4_DNS=ec2-54-154-36-100.eu-west-1.compute.amazonaws.com
+IPV4_DNS=ec2-54-217-135-141.eu-west-1.compute.amazonaws.com
 
 help:  ## Show this message
 	# From https://gist.github.com/prwhite/8168133#gistcomment-3785627
