@@ -1,5 +1,6 @@
 import asyncio
 from dataclasses import dataclass
+from json import JSONDecodeError
 from logging import Logger
 
 from argus.clients.sql.generic.client import GenericSqlClient
@@ -33,6 +34,8 @@ class CrawlWantlistTask:
                     wantlist_ids,
                 )
             )
+        except JSONDecodeError:
+            self.logger.error("JSONDecodeError while getting wantlist")
         finally:
             self.db_client.close()
 

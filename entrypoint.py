@@ -1,3 +1,5 @@
+import traceback
+
 import click
 
 from argus.clients.sql.sqlite.client import SqliteClient
@@ -39,7 +41,7 @@ def crawl_wantlist(user: str) -> None:
         )
         telegram_client.bot.send_message(
             config["telegram_chat_id_errors"],
-            f"[USER: {config['user']}] {e.__class__.__name__}: {str(e)}",
+            f"[USER: {config['user']}]\n{traceback.format_exc()}",
         )
         raise
 
