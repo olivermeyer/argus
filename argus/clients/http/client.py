@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from logging import Logger
 
 from aiohttp import ClientSession, TCPConnector
-from aiohttp_retry import RetryClient
+from aiohttp_retry import RetryClient, ExponentialRetry
 
 from argus.objects.logger import logger
 
@@ -24,7 +24,12 @@ class HttpClient:
         self.logger.debug(f"Sending get request with kwargs: {kwargs}")
         connector = TCPConnector(limit=1)
         async with ClientSession(connector=connector) as session:
-            client = RetryClient(client_session=session)
+            retry_options = ExponentialRetry(attempts=5)
+            client = RetryClient(
+                client_session=session,
+                logger=self.logger,
+                retry_options=retry_options,
+            )
             response = await client.get(**kwargs)
             response.raise_for_status()
             response = await response.text()
