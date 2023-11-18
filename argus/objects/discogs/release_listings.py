@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from logging import Logger
-from typing import List
 
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
+from argus.models.discogs.listing import Listing
 from argus.objects.logger import logger
 
 
@@ -12,7 +12,7 @@ from argus.objects.logger import logger
 class ReleaseListingsPageParser:
     logger: Logger = field(default=logger)
 
-    def parse_listings(self, page_text: str) -> List[dict]:
+    def parse_listings(self, page_text: str) -> list[Listing]:
         self.logger.debug(f"Parsing listings in page:\n{page_text}")
         soup = BeautifulSoup(page_text, "html.parser")
         raw_listings = soup.find_all("tr", {"class": "shortcut_navigable"})
@@ -22,7 +22,7 @@ class ReleaseListingsPageParser:
             parsed_listings.append(self._parse_listing_to_dict(listing))
         return parsed_listings
 
-    def _parse_listing_to_dict(self, listing: ResultSet) -> dict:
+    def _parse_listing_to_dict(self, listing: ResultSet) -> Listing:
         """
         Parses a listing into a dictionary.
         """
@@ -46,16 +46,16 @@ class ReleaseListingsPageParser:
         item_price = listing.find("td", {"class": "item_price"})
         price = item_price.find("span", {"class": "price"}).text
         seller = seller_info.find("div", {"class": "seller_block"}).find("a").text
-        return {
-            "title": title,
-            "url": url,
-            "id": listing_id,
-            "media_condition": media_condition,
-            "sleeve_condition": sleeve_condition,
-            "ships_from": ships_from,
-            "price": price,
-            "seller": seller,
-        }
+        return Listing(
+            id=listing_id,
+            title=title,
+            url=url,
+            media_condition=media_condition,
+            sleeve_condition=sleeve_condition,
+            ships_from=ships_from,
+            price=price,
+            seller=seller,
+        )
 
     def _derive_condition(self, text: str) -> str:
         self.logger.debug(f"Deriving condition from text: {text}")

@@ -32,7 +32,7 @@ bash-dev:  ## Bash with `dev` tag
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash
 
 test-dev:  ## Run tests in the dev container
-	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'pytest'
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'pytest -vv'
 
 crawl-wantlist:  ## Crawl wantlist for user om93
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'python entrypoint.py crawl-wantlist --user om93'

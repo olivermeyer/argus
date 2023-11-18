@@ -7,6 +7,7 @@ from argus.clients.sql.generic.client import GenericSqlClient
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
+from argus.models.discogs.listing import Listing
 from argus.objects.logger import logger
 from argus.objects.discogs.release_listings import ReleaseListingsPageParser
 
@@ -76,15 +77,15 @@ class CrawlWantlistTask:
             listings=discogs_listings,
         )
 
-    def _process_existing_release(self, discogs_listings: list[dict], db_listings: list[str]) -> None:
+    def _process_existing_release(self, discogs_listings: list[Listing], db_listings: list[str]) -> None:
         """
         Compares listings from Discogs with listings from the DB.
 
         If a new listing is found, sends a message to Telegram.
         """
         for discogs_listing in discogs_listings:
-            if discogs_listing["id"] not in db_listings:
-                self.logger.info(f"Found new listing: {discogs_listing['id']}")
+            if discogs_listing.id not in db_listings:
+                self.logger.info(f"Found new listing: {discogs_listing.id}")
                 self.telegram_client.send_new_listing_message(discogs_listing)
 
     def _process_new_release(self, release_id: str) -> None:
