@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from argus.clients.discogs.api.client import DiscogsApiClient
+from argus.clients.discogs.api import DiscogsApiClient
 
 
 @dataclass

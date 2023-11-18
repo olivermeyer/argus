@@ -54,3 +54,6 @@ class DiscogsApiClient:
             wantlist_ids += [str(item.id) for item in self.wantlist.page(page_number)]
         self.logger.info(f"Found {len(wantlist_ids)} releases in wantlist")
         return wantlist_ids
+
+    def get_price_suggestions(self, release_id: str) -> dict:
+        return self.client._get(url=f"/marketplace/price_suggestions/{release_id}")

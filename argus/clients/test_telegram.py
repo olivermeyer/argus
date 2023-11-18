@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from argus.clients.telegram.client import TelegramClient
+from argus.clients.telegram import TelegramClient
 from argus.models.discogs import Listing, Condition
 
 
