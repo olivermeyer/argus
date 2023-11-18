@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 from bs4 import ResultSet, BeautifulSoup
@@ -42,22 +42,19 @@ class Listing:
 
 @dataclass
 class ListingsPage:
-    listings: list[Listing]
+    html: str
+    listings: list[Listing] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.listings = self.parse(self.html)
 
     @staticmethod
-    def from_html(html: str) -> "ListingsPage":
-        return ListingsPage(listings=ListingsPage.parse_listings(html))
-
-    @staticmethod
-    def parse_listings(page_text: str) -> list[Listing]:
-        logger.debug(f"Parsing listings in page:\n{page_text}")
-        soup = BeautifulSoup(page_text, "html.parser")
+    def parse(html: str) -> list[Listing]:
+        logger.debug(f"Parsing listings in page:\n{html}")
+        soup = BeautifulSoup(html, "html.parser")
         raw_listings = soup.find_all("tr", {"class": "shortcut_navigable"})
         logger.debug(f"Found {len(raw_listings)} listings")
-        parsed_listings = []
-        for listing in raw_listings:
-            parsed_listings.append(ListingsPage._parse_listing(listing))
-        return parsed_listings
+        return [ListingsPage._parse_listing(listing) for listing in raw_listings]
 
     @staticmethod
     def _parse_listing(listing: ResultSet) -> Listing:

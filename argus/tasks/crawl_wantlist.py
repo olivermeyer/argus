@@ -62,7 +62,7 @@ class CrawlWantlistTask:
         Asynchronously processes a single release.
         """
         self.logger.info(f"Processing release {release_id}")
-        discogs_listings = ListingsPage.from_html(
+        discogs_listings = ListingsPage(
             html=await self.discogs_web_client.get_release_listings_page(release_id=release_id)
         )
         db_listings = self.db_client.get_listing_ids(release_id)

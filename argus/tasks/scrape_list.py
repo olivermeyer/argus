@@ -56,7 +56,7 @@ class ScrapeListTask:
 
     async def _get_listings_for_release(self, release_id):
         self.logger.info(f"Processing release {release_id}")
-        listings = ListingsPage.from_html(
+        listings = ListingsPage(
             html=await self.discogs_web_client.get_master_listings_page(master_id=release_id)
         )
         return listings

@@ -29,7 +29,7 @@ def test_sort_should_sort_correctly():
 
 def test_should_parse_release_listings_page():
 	with open(f"{os.path.dirname(__file__)}/fixtures/release_listings.html") as fh:
-		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
+		assert sorted(ListingsPage(fh.read()).listings) == sorted([
 			Listing(
 				id="2142025490",
 				title="Jode (3) - Jode (LP, Album)",
@@ -55,7 +55,7 @@ def test_should_parse_release_listings_page():
 
 def test_should_parse_master_listings_page():
 	with open(f"{os.path.dirname(__file__)}/fixtures/master_listings.html") as fh:
-		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
+		assert sorted(ListingsPage(fh.read()).listings) == sorted([
 			Listing(
 				id="2703709795",
 				title="Esa (6) - Esa (LP, Album)",
