@@ -2,10 +2,10 @@ import traceback
 
 import click
 
-from argus.clients.sql.sqlite.client import SqliteClient
-from argus.clients.discogs.api.client import DiscogsApiClient
-from argus.clients.discogs.web.client import DiscogsWebClient
-from argus.clients.telegram.client import TelegramClient
+from argus.clients.sql.sqlite import SqliteClient
+from argus.clients.discogs.api import DiscogsApiClient
+from argus.clients.discogs.web import DiscogsWebClient
+from argus.clients.telegram import TelegramClient
 from argus.config import get_config
 from argus.tasks.find_new_listings import FindNewListingsTask
 from argus.tasks.find_non_master_releases_in_list import FindNonMasterReleasesInListTask

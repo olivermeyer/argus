@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from logging import Logger
 from typing import List
 
-from argus.clients.discogs.api.client import DiscogsApiClient
-from argus.clients.discogs.web.client import DiscogsWebClient
+from argus.clients.discogs.api import DiscogsApiClient
+from argus.clients.discogs.web import DiscogsWebClient
 from argus.models.discogs import ListingsPage
 from argus.logger import logger
 
