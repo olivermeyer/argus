@@ -34,8 +34,8 @@ bash-dev:  ## Bash with `dev` tag
 test:  ## Run tests in the dev container
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'pytest -vv'
 
-crawl-wantlist:  ## Crawl wantlist for user om93
-	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'python entrypoint.py crawl-wantlist --user om93'
+find-new-listings:  ## Crawl wantlist for user om93
+	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'python entrypoint.py find-new-listings --user om93'
 
 clean-lists:  ## Clean lists for user om93-wants
 	docker run -v "$$(pwd)":/usr/local/argus -v argus-data:/usr/local/argus/data -v ~/.aws:/root/.aws -it argus:dev /bin/bash -c 'python entrypoint.py clean-lists --user om93-wants'
