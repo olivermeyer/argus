@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from argus.models.discogs import Listing, ListingsPage, Condition
 
 
@@ -11,7 +13,8 @@ def test_sort_should_sort_correctly():
 		media_condition=Condition.GENERIC,
 		sleeve_condition=Condition.GENERIC,
 		ships_from="somewhere",
-		price="1€",
+		price=1.0,
+		currency="EUR",
 		seller="someone",
 	)
 	second = Listing(
@@ -21,10 +24,40 @@ def test_sort_should_sort_correctly():
 		media_condition=Condition.GENERIC,
 		sleeve_condition=Condition.GENERIC,
 		ships_from="somewhere",
-		price="1€",
+		price=1.0,
+		currency="EUR",
 		seller="someone",
 	)
 	assert sorted([second, first]) == [first, second]
+
+
+def test_price_as_string_should_return_expected_value():
+	assert Listing(
+		id="1",
+		title="First listing",
+		url="www.listing.com",
+		media_condition=Condition.GENERIC,
+		sleeve_condition=Condition.GENERIC,
+		ships_from="somewhere",
+		price=1.0,
+		currency="EUR",
+		seller="someone",
+	).price_string == "€1.0"
+
+
+def test_price_as_string_should_raise_exception_for_invalid_currency():
+	with pytest.raises(ValueError):
+		price_as_string = Listing(
+			id="1",
+			title="First listing",
+			url="www.listing.com",
+			media_condition=Condition.GENERIC,
+			sleeve_condition=Condition.GENERIC,
+			ships_from="somewhere",
+			price=1.0,
+			currency="O@#",
+			seller="someone",
+		).price_string
 
 
 def test_should_parse_release_listings_page():
@@ -37,7 +70,8 @@ def test_should_parse_release_listings_page():
 				media_condition=Condition.VERY_GOOD,
 				sleeve_condition=Condition.VERY_GOOD_PLUS,
 				ships_from="Brazil",
-				price="R$160.00",
+				price=160.0,
+				currency="BRL",
 				seller="ErlonSilva",
 			),
 			Listing(
@@ -47,7 +81,8 @@ def test_should_parse_release_listings_page():
 				media_condition=Condition.VERY_GOOD_PLUS,
 				sleeve_condition=Condition.VERY_GOOD_PLUS,
 				ships_from="Brazil",
-				price="R$168.00",
+				price=168.0,
+				currency="BRL",
 				seller="ChicoeZicoSP",
 			),
 		])
@@ -63,7 +98,8 @@ def test_should_parse_master_listings_page():
 				media_condition=Condition.VERY_GOOD,
 				sleeve_condition=Condition.GOOD_PLUS,
 				ships_from="France",
-				price="€75.00",
+				price=75.00,
+				currency="EUR",
 				seller="badou0032",
 			),
 			Listing(
@@ -73,7 +109,8 @@ def test_should_parse_master_listings_page():
 				media_condition=Condition.VERY_GOOD_PLUS,
 				sleeve_condition=Condition.VERY_GOOD_PLUS,
 				ships_from="United States",
-				price="$119.99",
+				price=119.99,
+				currency="USD",
 				seller="academyrecords",
 			),
 		])

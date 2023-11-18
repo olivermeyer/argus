@@ -91,7 +91,8 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
 '{listing.media_condition}',
 '{listing.sleeve_condition}',
 '{listing.ships_from}',
-'{listing.price}',
+{listing.price},
+'{listing.currency}',
 '{listing.seller}'
 )"""
                 )
@@ -105,6 +106,7 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
 'none',
 'none',
 'none',
+0,
 'none',
 'none'
 )"""

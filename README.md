@@ -62,6 +62,15 @@ the EC2 instance and restarts the processes:
 
     make deploy
 
+### Schema changes
+If the schema of one of the tables changes, we need to wipe the data volumes on the EC2:
+
+    make deploy
+    make ssh-connect
+    docker volume rm $(docker volume ls --filter name='_data' --format "{{.Name}}")
+
+The tables will be recreated on the next run.
+
 ## Troubleshooting
 To check the logs:
 

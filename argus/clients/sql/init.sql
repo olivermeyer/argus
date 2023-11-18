@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS listings (
     media_condition VARCHAR,
     sleeve_condition VARCHAR,
     ships_from VARCHAR,
-    price VARCHAR,
+    price FLOAT,
+    currency VARCHAR,
     seller VARCHAR
 );

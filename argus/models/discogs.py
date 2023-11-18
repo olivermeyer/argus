@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 from bs4 import ResultSet, BeautifulSoup
+from currency_symbols import CurrencySymbols
 
 from argus.logger import logger
 
@@ -33,11 +34,19 @@ class Listing:
     media_condition: Condition
     sleeve_condition: Condition
     ships_from: str
-    price: str
+    price: float
+    currency: str
     seller: str
 
     def __lt__(self, other: "Listing"):
         return int(self.id) < int(other.id)
+
+    @property
+    def price_string(self):
+        currency_symbol = CurrencySymbols.get_symbol(self.currency)
+        if not currency_symbol:
+            raise ValueError(f"Unexpected currency: {self.currency}")
+        return f"{currency_symbol}{self.price}"
 
 
 @dataclass
@@ -78,7 +87,9 @@ class ListingsPage:
         seller_info = listing.find("td", {"class": "seller_info"})
         ships_from = seller_info.find_all("li")[2].text.split(":")[-1]
         item_price = listing.find("td", {"class": "item_price"})
-        price = item_price.find("span", {"class": "price"}).text
+        price_span = item_price.find("span", {"class": "price"})
+        currency = price_span["data-currency"]
+        price = float(price_span["data-pricevalue"])
         seller = seller_info.find("div", {"class": "seller_block"}).find("a").text
         return Listing(
             title=title,
@@ -87,6 +98,7 @@ class ListingsPage:
             media_condition=media_condition,
             sleeve_condition=sleeve_condition,
             ships_from=ships_from,
+            currency=currency,
             price=price,
             seller=seller,
         )
