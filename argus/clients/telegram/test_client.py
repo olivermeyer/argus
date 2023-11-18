@@ -1,8 +1,7 @@
 from unittest.mock import MagicMock
 
 from argus.clients.telegram.client import TelegramClient
-from argus.models.discogs.condition import Condition
-from argus.models.discogs.listing import Listing
+from argus.models.discogs import Listing, Condition
 
 
 def test_send_new_listing_message_should_send_expected_message():

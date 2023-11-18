@@ -56,7 +56,6 @@ def scrape_list(user: str, list_id: int, sellers: int) -> None:
     task = ScrapeListTask(
         discogs_api_client=DiscogsApiClient(token=config["discogs_token"]),
         discogs_web_client=DiscogsWebClient(),
-        listings_page_parser=ReleaseListingsPageParser(),
         list_id=list_id,
         sellers=sellers,
     )

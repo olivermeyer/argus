@@ -3,7 +3,7 @@ from logging import Logger
 
 import telegram
 
-from argus.models.discogs.listing import Listing
+from argus.models.discogs import Listing
 from argus.logger import logger
 
 

@@ -1,7 +1,6 @@
 import os
 
-from argus.models.discogs.condition import Condition
-from argus.models.discogs.listing import Listing, ListingsPage
+from argus.models.discogs import Listing, ListingsPage, Condition
 
 
 def test_sort_should_sort_correctly():
@@ -29,7 +28,7 @@ def test_sort_should_sort_correctly():
 
 
 def test_should_parse_release_listings_page():
-	with open(f"{os.path.dirname(__file__)}/release_listings.html") as fh:
+	with open(f"{os.path.dirname(__file__)}/fixtures/release_listings.html") as fh:
 		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
 			Listing(
 				id="2142025490",
@@ -55,7 +54,7 @@ def test_should_parse_release_listings_page():
 
 
 def test_should_parse_master_listings_page():
-	with open(f"{os.path.dirname(__file__)}/master_listings.html") as fh:
+	with open(f"{os.path.dirname(__file__)}/fixtures/master_listings.html") as fh:
 		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
 			Listing(
 				id="2703709795",

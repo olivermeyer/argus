@@ -6,7 +6,7 @@ from typing import List
 
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
-from argus.models.discogs.listing import ListingsPage
+from argus.models.discogs import ListingsPage
 from argus.logger import logger
 
 

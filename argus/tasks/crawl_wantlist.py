@@ -7,7 +7,7 @@ from argus.clients.sql.generic.client import GenericSqlClient
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
-from argus.models.discogs.listing import Listing, ListingsPage
+from argus.models.discogs import Listing, ListingsPage
 from argus.logger import logger
 
 

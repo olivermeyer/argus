@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
 
-from argus.models.discogs.listing import Listing
+from argus.models.discogs import Listing
 from argus.logger import logger
 
 
