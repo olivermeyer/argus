@@ -7,7 +7,7 @@ from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
 from argus.config import get_config
-from argus.tasks.crawl_wantlist import CrawlWantlistTask
+from argus.tasks.find_new_listings import FindNewListingsTask
 from argus.tasks.find_non_master_releases_in_list import FindNonMasterReleasesInListTask
 from argus.tasks.scrape_list import ScrapeListTask
 
@@ -19,9 +19,9 @@ def argus():
 
 @click.command()
 @click.option("--user", required=True)
-def crawl_wantlist(user: str) -> None:
+def find_new_listings(user: str) -> None:
     config = get_config(user)
-    task = CrawlWantlistTask(
+    task = FindNewListingsTask(
         db_client=SqliteClient(),
         discogs_api_client=DiscogsApiClient(token=config["discogs_token"]),
         discogs_web_client=DiscogsWebClient(),
@@ -44,7 +44,7 @@ def crawl_wantlist(user: str) -> None:
         raise
 
 
-argus.add_command(crawl_wantlist)
+argus.add_command(find_new_listings)
 
 
 @click.command()

@@ -12,7 +12,7 @@ from argus.logger import logger
 
 
 @dataclass
-class CrawlWantlistTask:
+class FindNewListingsTask:
     db_client: GenericSqlClient
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
