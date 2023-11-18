@@ -4,6 +4,7 @@ from logging import Logger
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
+from argus.models.discogs.condition import Condition
 from argus.models.discogs.listing import Listing
 from argus.objects.logger import logger
 
@@ -36,9 +37,10 @@ class ReleaseListingsPageParser:
         media_condition_text = item_condition.find_all("span")[2].text.strip()
         media_condition = self._derive_condition(media_condition_text)
         try:
-            sleeve_condition = item_condition.find(
+            sleeve_condition_text = item_condition.find(
                 "span", {"class": "item_sleeve_condition"}
             ).text.strip()
+            sleeve_condition = self._derive_condition(sleeve_condition_text)
         except AttributeError:
             sleeve_condition = "None"
         seller_info = listing.find("td", {"class": "seller_info"})
@@ -57,21 +59,10 @@ class ReleaseListingsPageParser:
             seller=seller,
         )
 
-    def _derive_condition(self, text: str) -> str:
+    def _derive_condition(self, text: str) -> Condition:
         self.logger.debug(f"Deriving condition from text: {text}")
-        expected_conditions = [
-            "Mint (M)",
-            "Near Mint (NM or M-)",
-            "Very Good Plus (VG+)",
-            "Very Good (VG)",
-            "Good (G)",
-            "Good Plus (G+)",
-            "Poor (P)",
-            "Fair (F)",
-            "Generic",
-        ]
-        for condition in expected_conditions:
-            if condition in text:
+        for condition in Condition:
+            if condition.value.long in text:
                 self.logger.debug(f"Found condition: {condition}")
                 return condition
         raise ValueError(f"Couldn't derive a condition from text: {text}")

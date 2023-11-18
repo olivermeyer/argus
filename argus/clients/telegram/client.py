@@ -1,9 +1,9 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from logging import Logger
 
 import telegram
 
-from argus.models.discogs.listing import Listing, Condition
+from argus.models.discogs.listing import Listing
 from argus.objects.logger import logger
 
 
@@ -42,9 +42,10 @@ class TelegramClient:
         * The third line contains a link to the listing
         """
         first_line = listing.title
+        logger.error(listing)
         second_line = "{mc} / {sc} | {p} | {sf}".format(
-            mc=self.short_condition(listing.media_condition),
-            sc=self.short_condition(listing.sleeve_condition),
+            mc=listing.media_condition.value.short,
+            sc=listing.sleeve_condition.value.short,
             p=listing.price,
             sf=listing.ships_from,
         )
@@ -54,21 +55,6 @@ class TelegramClient:
             f"{self.clean_string(second_line)}\n"
             f"{third_line}"
         )
-
-    @staticmethod
-    def short_condition(condition: Condition) -> str:
-        """
-        Returns the abbreviated condition.
-
-        E.g. 'Very Good+ (VG+)' becomes 'VG+'. 'Generic' becomes 'Gen'.
-        """
-        if "Generic" in condition.value:
-            short_condition = "Gen"
-        else:
-            short_condition = condition.value[
-                              condition.value.find("(") + 1 : condition.value.find(")")
-                              ]
-        return short_condition
 
     @staticmethod
     def clean_string(string: str) -> str:

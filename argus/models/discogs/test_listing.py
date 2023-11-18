@@ -1,3 +1,4 @@
+from argus.models.discogs.condition import Condition
 from argus.models.discogs.listing import Listing
 
 
@@ -6,8 +7,8 @@ def test_sort_should_sort_correctly():
 		id="1",
 		title="First listing",
 		url="www.listing.com",
-		media_condition="Generic",
-		sleeve_condition="Generic",
+		media_condition=Condition.GENERIC,
+		sleeve_condition=Condition.GENERIC,
 		ships_from="somewhere",
 		price="1€",
 		seller="someone",
@@ -16,8 +17,8 @@ def test_sort_should_sort_correctly():
 		id="2",
 		title="Second listing",
 		url="www.listing.com",
-		media_condition="Generic",
-		sleeve_condition="Generic",
+		media_condition=Condition.GENERIC,
+		sleeve_condition=Condition.GENERIC,
 		ships_from="somewhere",
 		price="1€",
 		seller="someone",

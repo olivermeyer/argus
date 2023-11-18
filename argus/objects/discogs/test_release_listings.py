@@ -1,5 +1,6 @@
 import os
 
+from argus.models.discogs.condition import Condition
 from argus.models.discogs.listing import Listing
 from argus.objects.discogs.release_listings import ReleaseListingsPageParser
 
@@ -11,8 +12,8 @@ def test_parse_listings():
                 id="2142025490",
                 title="Jode (3) - Jode (LP, Album)",
                 url="https://discogs.com/sell/item/2142025490",
-                media_condition="Very Good (VG)",
-                sleeve_condition="Very Good Plus (VG+)",
+                media_condition=Condition.VERY_GOOD,
+                sleeve_condition=Condition.VERY_GOOD_PLUS,
                 ships_from="Brazil",
                 price="R$160.00",
                 seller="ErlonSilva",
@@ -21,8 +22,8 @@ def test_parse_listings():
                 title="Jode (3) - Jode (LP, Album)",
                 url="https://discogs.com/sell/item/1506778963",
                 id="1506778963",
-                media_condition="Very Good Plus (VG+)",
-                sleeve_condition="Very Good Plus (VG+)",
+                media_condition=Condition.VERY_GOOD_PLUS,
+                sleeve_condition=Condition.VERY_GOOD_PLUS,
                 ships_from="Brazil",
                 price="R$168.00",
                 seller="ChicoeZicoSP",
