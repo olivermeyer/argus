@@ -6,8 +6,8 @@ from typing import List
 
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
-from argus.objects.discogs.master_listings import MasterListingsPageParser
-from argus.objects.logger import logger
+from argus.models.discogs import ListingsPage
+from argus.logger import logger
 
 
 @dataclass
@@ -19,7 +19,6 @@ class ScrapeListTask:
     """
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
-    listings_page_parser: MasterListingsPageParser
     list_id: int
     sellers: int
     logger: Logger = logger
@@ -57,7 +56,7 @@ class ScrapeListTask:
 
     async def _get_listings_for_release(self, release_id):
         self.logger.info(f"Processing release {release_id}")
-        listings = self.listings_page_parser.parse_listings(
-            page_text=await self.discogs_web_client.get_master_listings_page(master_id=release_id)
+        listings = ListingsPage(
+            html=await self.discogs_web_client.get_master_listings_page(master_id=release_id)
         )
         return listings

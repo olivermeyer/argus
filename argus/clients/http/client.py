@@ -4,7 +4,7 @@ from logging import Logger
 from aiohttp import ClientSession, TCPConnector
 from aiohttp_retry import RetryClient, ExponentialRetry
 
-from argus.objects.logger import logger
+from argus.logger import logger
 
 
 @dataclass

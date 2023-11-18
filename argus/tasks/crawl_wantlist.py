@@ -7,8 +7,8 @@ from argus.clients.sql.generic.client import GenericSqlClient
 from argus.clients.discogs.api.client import DiscogsApiClient
 from argus.clients.discogs.web.client import DiscogsWebClient
 from argus.clients.telegram.client import TelegramClient
-from argus.objects.logger import logger
-from argus.objects.discogs.release_listings import ReleaseListingsPageParser
+from argus.models.discogs import Listing, ListingsPage
+from argus.logger import logger
 
 
 @dataclass
@@ -16,7 +16,6 @@ class CrawlWantlistTask:
     db_client: GenericSqlClient
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
-    listings_page_parser: ReleaseListingsPageParser
     telegram_client: TelegramClient
     user: str
     logger: Logger = logger
@@ -63,28 +62,28 @@ class CrawlWantlistTask:
         Asynchronously processes a single release.
         """
         self.logger.info(f"Processing release {release_id}")
-        discogs_listings = self.listings_page_parser.parse_listings(
-            page_text=await self.discogs_web_client.get_release_listings_page(release_id=release_id)
+        discogs_listings = ListingsPage(
+            html=await self.discogs_web_client.get_release_listings_page(release_id=release_id)
         )
         db_listings = self.db_client.get_listing_ids(release_id)
         if db_listings:
-            self._process_existing_release(discogs_listings=discogs_listings, db_listings=db_listings)
+            self._process_existing_release(discogs_listings=discogs_listings.listings, db_listings=db_listings)
         else:
             self._process_new_release(release_id=release_id)
         self.db_client.update_listings(
             release_id=release_id,
-            listings=discogs_listings,
+            listings=discogs_listings.listings,
         )
 
-    def _process_existing_release(self, discogs_listings: list[dict], db_listings: list[str]) -> None:
+    def _process_existing_release(self, discogs_listings: list[Listing], db_listings: list[str]) -> None:
         """
         Compares listings from Discogs with listings from the DB.
 
         If a new listing is found, sends a message to Telegram.
         """
         for discogs_listing in discogs_listings:
-            if discogs_listing["id"] not in db_listings:
-                self.logger.info(f"Found new listing: {discogs_listing['id']}")
+            if discogs_listing.id not in db_listings:
+                self.logger.info(f"Found new listing: {discogs_listing.id}")
                 self.telegram_client.send_new_listing_message(discogs_listing)
 
     def _process_new_release(self, release_id: str) -> None:

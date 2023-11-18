@@ -7,7 +7,7 @@ from discogs_client.client import Client
 from discogs_client.models import User, Wantlist, Release, List
 from retry import retry
 
-from argus.objects.logger import logger
+from argus.logger import logger
 
 
 @dataclass

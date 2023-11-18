@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
 
-from argus.objects.logger import logger
+from argus.models.discogs import Listing
+from argus.logger import logger
 
 
 class GenericSqlClient(ABC):
@@ -73,7 +74,7 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
         results = self.execute(query)
         return [listing["listing_id"] for listing in results]
 
-    def update_listings(self, release_id, listings: List[dict]) -> None:
+    def update_listings(self, release_id, listings: list[Listing]) -> None:
         """
         Updates the listings for a release.
         """
@@ -84,14 +85,14 @@ SELECT listing_id FROM listings WHERE release_id='{release_id}'"""
                 values.append(
                     f"""(
 '{release_id}',
-'{listing["id"]}',
-'{listing["title"].replace("'", "")}',
-'{listing["url"]}',
-'{listing["media_condition"]}',
-'{listing["sleeve_condition"]}',
-'{listing["ships_from"]}',
-'{listing["price"]}',
-'{listing["seller"]}'
+'{listing.id}',
+'{listing.title.replace("'", "")}',
+'{listing.url}',
+'{listing.media_condition}',
+'{listing.sleeve_condition}',
+'{listing.ships_from}',
+'{listing.price}',
+'{listing.seller}'
 )"""
                 )
         else:
