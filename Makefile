@@ -5,7 +5,7 @@ help:  ## Show this message
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\033[36m\033[0m\n"} /^[$$()% 0-9a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 build-latest:  ## Build with `latest` tag
-	docker build . -t argus:latest
+	docker build --platform linux/amd64 . -t argus:latest
 
 push-latest:  ## Push image with `latest` tag to ECR
 	aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 595687261518.dkr.ecr.eu-west-1.amazonaws.com

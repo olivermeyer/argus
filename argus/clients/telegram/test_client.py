@@ -17,12 +17,13 @@ def test_send_new_listing_message_should_send_expected_message():
 		media_condition=Condition.VERY_GOOD,
 		sleeve_condition=Condition.GENERIC,
 		ships_from="somewhere",
-		price="1€",
+		price=1.0,
+		currency="EUR",
 		seller="someone",
 	)
 	client.send_new_listing_message(listing=listing)
 	client.bot.send_message.assert_called_once_with(
 		123,
-		'*First listing*\nVG / Gen \\| 1€ \\| somewhere\nView on [Discogs](www.listing.com)',
+		'*First listing*\nVG / Gen \\| €1\\.0 \\| somewhere\nView on [Discogs](www.listing.com)',
 		parse_mode='MarkdownV2',
 	)

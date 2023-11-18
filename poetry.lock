@@ -314,6 +314,17 @@ files = [
 ]
 
 [[package]]
+name = "currency-symbols"
+version = "2.0.3"
+description = "Get currency symbol by currency code"
+optional = false
+python-versions = "*"
+files = [
+    {file = "currency-symbols-2.0.3.tar.gz", hash = "sha256:f6101415319e06674c63d05ed9988b131dd8004cc437e77f7e83e734e5d2eb2f"},
+    {file = "currency_symbols-2.0.3-py3-none-any.whl", hash = "sha256:e71c82320f1b410ab15614f5df6ea3645b204752081689bae30b6331006357f0"},
+]
+
+[[package]]
 name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
@@ -919,4 +930,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "191e70c0590a7ef5d0c530930e646a59ed0e67e5d990cfbdc3ee3f3764de2c06"
+content-hash = "8376a539b0898aaa8c189108fdb4d9f9f62d7bdc3ea15765e46b5663b0784ce8"

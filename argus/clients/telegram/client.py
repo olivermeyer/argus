@@ -42,11 +42,10 @@ class TelegramClient:
         * The third line contains a link to the listing
         """
         first_line = listing.title
-        logger.error(listing)
         second_line = "{mc} / {sc} | {p} | {sf}".format(
             mc=listing.media_condition.value.short,
             sc=listing.sleeve_condition.value.short,
-            p=listing.price,
+            p=listing.price_string,
             sf=listing.ships_from,
         )
         third_line = f"View on [Discogs]({listing.url})"
