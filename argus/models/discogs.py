@@ -24,6 +24,8 @@ class Condition(Enum):
     POOR = _Condition("Poor (P)", "Poor", "P")
     FAIR = _Condition("Fair (F)", "Fair", "F")
     GENERIC = _Condition("Generic", "Generic", "Gen")
+    NOT_GRADED = _Condition("Not Graded", "Not Graded", "Not Graded")
+    NO_COVER = _Condition("No Cover", "No Cover", "No Cover")
 
 
 @dataclass
@@ -83,7 +85,7 @@ class ListingsPage:
             ).text.strip()
             sleeve_condition = ListingsPage._derive_condition(sleeve_condition_text)
         except AttributeError:
-            sleeve_condition = "None"
+            sleeve_condition = Condition.NOT_GRADED
         seller_info = listing.find("td", {"class": "seller_info"})
         ships_from = seller_info.find_all("li")[2].text.split(":")[-1]
         item_price = listing.find("td", {"class": "item_price"})
