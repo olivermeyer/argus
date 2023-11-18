@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from json import JSONDecodeError
 from logging import Logger
 
+from argus.clients.forex import ForexClient
 from argus.clients.sql.generic import GenericSqlClient
 from argus.clients.discogs.api import DiscogsApiClient
 from argus.clients.discogs.web import DiscogsWebClient
@@ -17,6 +18,7 @@ class FindNewListingsTask:
     discogs_api_client: DiscogsApiClient
     discogs_web_client: DiscogsWebClient
     telegram_client: TelegramClient
+    forex_client: ForexClient
     user: str
     logger: Logger = logger
 
@@ -74,6 +76,16 @@ class FindNewListingsTask:
             release_id=release_id,
             listings=discogs_listings.listings,
         )
+
+    def _normalize_currency(self, listing: Listing) -> Listing:
+        """Converts the price of the listing to EUR."""
+        listing.price = self.forex_client.convert(
+            amount=listing.price,
+            from_=listing.currency,
+            to_="EUR",
+        )
+        listing.currency = "EUR"
+        return listing
 
     def _process_existing_release(self, discogs_listings: list[Listing], db_listings: list[str]) -> None:
         """
