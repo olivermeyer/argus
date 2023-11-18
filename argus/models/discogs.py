@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from enum import Enum
 
 from bs4 import ResultSet, BeautifulSoup
-from pydantic import BaseModel
 
 from argus.logger import logger
 
@@ -26,7 +25,8 @@ class Condition(Enum):
     GENERIC = _Condition("Generic", "Generic", "Gen")
 
 
-class Listing(BaseModel):
+@dataclass
+class Listing:
     id: str  # TODO: Change this to int
     title: str
     url: str
