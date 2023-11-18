@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from logging import Logger
 
 from argus.clients.http.client import HttpClient
-from argus.objects.logger import logger
+from argus.logger import logger
 
 
 @dataclass

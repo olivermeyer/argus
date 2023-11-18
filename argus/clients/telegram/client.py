@@ -4,7 +4,7 @@ from logging import Logger
 import telegram
 
 from argus.models.discogs.listing import Listing
-from argus.objects.logger import logger
+from argus.logger import logger
 
 
 @dataclass
