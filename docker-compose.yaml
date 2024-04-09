@@ -1,0 +1,9 @@
+services:
+  argus:
+    build: .
+    command: ["python", "argus/app.py", "find-new-listings"]
+    restart: unless-stopped
+    volumes:
+        - ./data:/var/argus
+    environment:
+      - DB_LOCATION=/var/argus/argus.db

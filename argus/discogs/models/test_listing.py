@@ -2,12 +2,12 @@ import os
 
 import pytest
 
-from argus.models.discogs import Listing, ListingsPage, Condition
+from argus.discogs.models.listing import Listing, ListingsPage, Condition
 
 
 def test_sort_should_sort_correctly():
 	first = Listing(
-		id="1",
+		listing_id=1,
 		title="First listing",
 		url="www.listing.com",
 		media_condition=Condition.GENERIC,
@@ -18,7 +18,7 @@ def test_sort_should_sort_correctly():
 		seller="someone",
 	)
 	second = Listing(
-		id="2",
+		listing_id=2,
 		title="Second listing",
 		url="www.listing.com",
 		media_condition=Condition.GENERIC,
@@ -33,7 +33,7 @@ def test_sort_should_sort_correctly():
 
 def test_price_as_string_should_return_expected_value():
 	assert Listing(
-		id="1",
+		id=1,
 		title="First listing",
 		url="www.listing.com",
 		media_condition=Condition.GENERIC,
@@ -47,7 +47,7 @@ def test_price_as_string_should_return_expected_value():
 
 def test_price_as_string_should_raise_exception_for_invalid_currency():
 	with pytest.raises(ValueError):
-		price_as_string = Listing(
+		Listing(
 			id="1",
 			title="First listing",
 			url="www.listing.com",
@@ -62,9 +62,9 @@ def test_price_as_string_should_raise_exception_for_invalid_currency():
 
 def test_should_parse_release_listings_page():
 	with open(f"{os.path.dirname(__file__)}/fixtures/release_listings.html") as fh:
-		assert sorted(ListingsPage(fh.read()).listings) == sorted([
+		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
 			Listing(
-				id="2142025490",
+				listing_id=2142025490,
 				title="Jode (3) - Jode (LP, Album)",
 				url="https://discogs.com/sell/item/2142025490",
 				media_condition=Condition.VERY_GOOD,
@@ -77,7 +77,7 @@ def test_should_parse_release_listings_page():
 			Listing(
 				title="Jode (3) - Jode (LP, Album)",
 				url="https://discogs.com/sell/item/1506778963",
-				id="1506778963",
+				listing_id=1506778963,
 				media_condition=Condition.VERY_GOOD_PLUS,
 				sleeve_condition=Condition.VERY_GOOD_PLUS,
 				ships_from="Brazil",
@@ -90,9 +90,9 @@ def test_should_parse_release_listings_page():
 
 def test_should_parse_master_listings_page():
 	with open(f"{os.path.dirname(__file__)}/fixtures/master_listings.html") as fh:
-		assert sorted(ListingsPage(fh.read()).listings) == sorted([
+		assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted([
 			Listing(
-				id="2703709795",
+				listing_id=2703709795,
 				title="Esa (6) - Esa (LP, Album)",
 				url="https://discogs.com/sell/item/2703709795",
 				media_condition=Condition.VERY_GOOD,
@@ -103,7 +103,7 @@ def test_should_parse_master_listings_page():
 				seller="badou0032",
 			),
 			Listing(
-				id="2643428466",
+				listing_id=2643428466,
 				title="Esa (6) - Esa (LP, Album)",
 				url="https://discogs.com/sell/item/2643428466",
 				media_condition=Condition.VERY_GOOD_PLUS,
