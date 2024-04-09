@@ -1,93 +1,84 @@
 import asyncio
-from dataclasses import dataclass
-from json import JSONDecodeError
-from logging import Logger
+from time import sleep
 
-from argus.clients.sql.generic import GenericSqlClient
-from argus.clients.discogs.api import DiscogsApiClient
-from argus.clients.discogs.web import DiscogsWebClient
-from argus.clients.telegram import TelegramClient
-from argus.models.discogs import Listing, ListingsPage
+from sqlalchemy.engine import Engine
+
+from argus.db import engine as _engine
+from argus.discogs.clients.api import DiscogsApiClient
+from argus.discogs.models.listing import Listings, Listing
+from argus.discogs.models.wantlist import WantlistItem
+from argus.discogs.clients.web import DiscogsWebClient
+from argus.error import Error
 from argus.logger import logger
+from argus.services.notification import notify_users
+from argus.telegram_.client import TelegramClient
+from argus.user import User
 
 
-@dataclass
-class FindNewListingsTask:
-    db_client: GenericSqlClient
-    discogs_api_client: DiscogsApiClient
-    discogs_web_client: DiscogsWebClient
-    telegram_client: TelegramClient
-    user: str
-    logger: Logger = logger
+def find_new_listings(
+        telegram: TelegramClient,
+        engine: Engine = _engine,
+        discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
+        discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
+):
+    for user in User.fetch_all(engine=engine):
+        WantlistItem.update(user, client=discogs_api_client, engine=engine)
+    asyncio.run(_process_releases(engine=engine, client=discogs_web_client, telegram=telegram))
+    Listing.clean(engine=engine)
 
-    def execute(self):
-        """
-        Crawls a user's wantlist to find new listings.
-        """
-        self.db_client.initialize_argus()
+
+async def _process_releases(
+        engine: Engine,
+        client: DiscogsWebClient,
+        telegram: TelegramClient,
+) -> None:
+    tasks = []
+    for release_id in WantlistItem.fetch_all_release_ids(engine=engine):
+        tasks.append(
+            _process_release(release_id=release_id, engine=engine, client=client, telegram=telegram)
+        )
+    for task in asyncio.as_completed(tasks):
         try:
-            wantlist_ids = self.discogs_api_client.get_wantlist_ids()
-            self.db_client.update_wantlist(user=self.user, release_ids=wantlist_ids)
-            asyncio.run(
-                self._crawl_async(
-                    wantlist_ids,
-                )
-            )
-        except JSONDecodeError:
-            self.logger.error("JSONDecodeError while getting wantlist")
-        finally:
-            self.db_client.close()
+            await task
+        except Exception as e:
+            logger.error(f"Error while processing release: {str(e)}")
+            await notify_users(Error(text=str(e)), engine=engine, telegram=telegram)
 
-    async def _crawl_async(
-        self,
-        wantlist_ids: list,
-    ):
-        """
-        Creates one async task for each release in the wantlist and gathers the results.
-        """
-        tasks = []
-        for release_id in wantlist_ids:
-            tasks.append(
-                self._process_release(
-                    release_id
-                )
-            )
-        await asyncio.gather(*tasks)
 
-    async def _process_release(
-        self,
-        release_id: str,
-    ):
-        """
-        Asynchronously processes a single release.
-        """
-        self.logger.info(f"Processing release {release_id}")
-        discogs_listings = ListingsPage(
-            html=await self.discogs_web_client.get_release_listings_page(release_id=release_id)
-        )
-        db_listings = self.db_client.get_listing_ids(release_id)
-        if db_listings:
-            self._process_existing_release(discogs_listings=discogs_listings.listings, db_listings=db_listings)
+async def _process_release(
+        release_id: int,
+        engine: Engine,
+        client: DiscogsWebClient,
+        telegram: TelegramClient,
+) -> None:
+    logger.info(f"Processing release {release_id}")
+    discogs_listings = await Listings.on_discogs(release_id, client=client)
+    db_listings = await Listings.in_db(release_id, engine=engine)
+    if db_listings:
+        if new_listings := [
+            listing for listing in discogs_listings if listing not in db_listings
+        ]:
+            logger.info(f"Found {len(new_listings)} new listings for release {release_id}")
+            for listing in new_listings:
+                await notify_users(listing, engine=engine, telegram=telegram)
         else:
-            self._process_new_release(release_id=release_id)
-        self.db_client.update_listings(
-            release_id=release_id,
-            listings=discogs_listings.listings,
+            logger.info(f"No new listings for release {release_id}")
+    Listing.update(release_id, discogs_listings, engine=engine)
+
+
+def main(
+        telegram: TelegramClient,
+        engine: Engine,
+        discogs_api_client: DiscogsApiClient,
+        discogs_web_client: DiscogsWebClient,
+):
+    while True:
+        find_new_listings(
+            telegram=telegram,
+            engine=engine,
+            discogs_api_client=discogs_api_client,
+            discogs_web_client=discogs_web_client,
         )
-
-    def _process_existing_release(self, discogs_listings: list[Listing], db_listings: list[str]) -> None:
-        """
-        Compares listings from Discogs with listings from the DB.
-
-        If a new listing is found, sends a message to Telegram.
-        """
-        for discogs_listing in discogs_listings:
-            if discogs_listing.id not in db_listings:
-                self.logger.info(f"Found new listing: {discogs_listing.id}")
-                self.telegram_client.send_new_listing_message(discogs_listing)
-
-    def _process_new_release(self, release_id: str) -> None:
-        """
-        Logs the new release and does nothing.
-        """
-        self.logger.debug(f"Release {release_id} not yet in state")
+        sleep_seconds = 60
+        logger.info(f"Sleeping for {sleep_seconds} seconds")
+        sleep(sleep_seconds)

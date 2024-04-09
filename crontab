@@ -1,4 +1,0 @@
-*/2 * * * * docker run --rm -v om93_data:/usr/local/argus/data -v om93_logs:/var/log/argus -t argus:latest python entrypoint.py find-new-listings --user om93
-*/2 * * * * docker run --rm -v pa_data:/usr/local/argus/data -v pa_logs:/var/log/argus -t argus:latest python entrypoint.py find-new-listings --user pa
-34 */6 * * * docker run --rm -v ash_data:/usr/local/argus/data -v ash_logs:/var/log/argus -t argus:latest python entrypoint.py find-new-listings --user ash
-0 */6 * * * docker system prune -f --filter "until=$((6))h"

@@ -52,8 +52,10 @@ docs/_build/
 # Other
 .idea/
 secrets.yaml
-data/
+data/*
+!data/.gitkeep
 environment
+demo.py
 
 # Terraform
 .terraform/

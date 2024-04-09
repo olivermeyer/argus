@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM python:3.11-slim-buster
 
 ENV ARGUS_DIRECTORY=/usr/local/argus
 ENV DATA_DIRECTORY=${ARGUS_DIRECTORY}/data
@@ -15,7 +15,8 @@ COPY pyproject.toml poetry.lock ${ARGUS_DIRECTORY}/
 RUN pip install poetry && \
     poetry config virtualenvs.create false
 
-RUN poetry install
+RUN poetry install --no-root
 
-COPY entrypoint.py ${ARGUS_DIRECTORY}/entrypoint.py
 COPY argus ${ARGUS_DIRECTORY}/argus
+
+RUN poetry install
