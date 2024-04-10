@@ -51,7 +51,6 @@ async def _process_release(
         client: DiscogsWebClient,
         telegram: TelegramClient,
 ) -> None:
-    logger.info(f"Processing release {release_id}")
     discogs_listings = await Listings.on_discogs(release_id, client=client)
     db_listings = await Listings.in_db(release_id, engine=engine)
     if db_listings:

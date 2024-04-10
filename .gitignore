@@ -51,9 +51,9 @@ docs/_build/
 
 # Other
 .idea/
-secrets.yaml
-data/*
-!data/.gitkeep
+.env
+data/*/*
+!data/*/.gitkeep
 environment
 demo.py
 

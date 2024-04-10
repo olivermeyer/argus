@@ -87,14 +87,19 @@ class Listing(SQLModel, table=True):
 
     @staticmethod
     def update(release_id: int, listings: list["Listing"], engine: Engine) -> None:
-        with Session(engine) as session:
-            for result in session.exec(
-                select(Listing).where(Listing.release_id == release_id)
-            ).all():
-                session.delete(result)
-            for listing in listings:
-                session.add(listing)
-            session.commit()
+        try:
+            logger.info(f"Updating listings for release {release_id} in the database")
+            with Session(engine) as session:
+                for result in session.exec(
+                    select(Listing).where(Listing.release_id == release_id)
+                ).all():
+                    session.delete(result)
+                for listing in listings:
+                    session.add(listing)
+                session.commit()
+        except Exception as e:
+            logger.error(f"Failed to update listings for release {release_id}: {e}")
+            raise
 
     @staticmethod
     def clean(engine: Engine) -> None:
@@ -127,7 +132,6 @@ class ListingsPage:
 class Listings:
     @staticmethod
     async def on_discogs(release_id: int, client: DiscogsWebClient) -> list[Listing]:
-        logger.info(f"Fetching listings for release {release_id} from Discogs")
         listings_page = await ListingsPage.fetch(release_id, client)
         # TODO: do this somewhere else
         for listing in listings_page.listings:
