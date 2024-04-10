@@ -15,14 +15,14 @@ NotificationTypes = Union[Listing, Error]
 
 
 async def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
-    logger.info(f"Notifying user {user.name} about new listing {listing.listing_id}")
+    logger.debug(f"Notifying user {user.name} about new listing {listing.listing_id}")
     message = NewListingMessage(listing).prepare()
     await telegram.send(message, user.telegram_chat_id)
 
 
 async def notify_users_for_new_listing(listing: Listing, engine: Engine, telegram: TelegramClient):
     with Session(engine) as session:
-        logger.info(f"Finding users to notify about new listing {listing.listing_id}")
+        logger.debug(f"Finding users to notify about new listing {listing.listing_id}")
         users = session.exec(
             select(User).where(col(User.id).in_(
                 session.exec(
@@ -35,7 +35,7 @@ async def notify_users_for_new_listing(listing: Listing, engine: Engine, telegra
 
 
 async def notify_new_error(user: User, error: Error, telegram: TelegramClient):
-    logger.info(f"Notifying user {user.name} about error: {error.text}")
+    logger.debug(f"Notifying user {user.name} about {error.text}")
     message = ErrorMessage(error).prepare()
     await telegram.send(message, user.telegram_chat_id)
 

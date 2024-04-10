@@ -1,5 +1,6 @@
-import click
+import os
 
+import click
 from sqlmodel import SQLModel
 
 from argus.db import engine
@@ -17,7 +18,7 @@ def argus():
 @click.command()
 def find_new_listings() -> None:
     main(
-        telegram=TelegramClient("1997819840:AAFlb7dYUy6m6hl0VIEiQHPWNx3laid2zKI"),
+        telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN")),
         engine=engine,
         discogs_api_client=DiscogsApiClient(),
         discogs_web_client=DiscogsWebClient(),

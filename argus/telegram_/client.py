@@ -15,4 +15,9 @@ class TelegramClient:
         self.logger = logger
 
     async def send(self, message: Message, chat_id: int) -> None:
-        await self.bot.send_message(chat_id, message.text, parse_mode="MarkdownV2")
+        try:
+            logger.info(f"Sending message to chat {chat_id}")
+            await self.bot.send_message(chat_id, message.text, parse_mode="MarkdownV2")
+        except Exception as e:
+            logger.error(f"Error while sending message: {str(e)}")
+            raise e

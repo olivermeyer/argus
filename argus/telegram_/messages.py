@@ -64,5 +64,5 @@ class ErrorMessage:
     text: str = ""
 
     def prepare(self):
-        self.text = f"[v2] {self.error.text}"
+        self.text = f"\\[v2\\] {self.error.text}"
         return self

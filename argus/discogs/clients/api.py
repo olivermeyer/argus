@@ -1,16 +1,23 @@
 import requests
 
+from argus.logger import logger
+
 
 class DiscogsApiClient:
     base_url: str = "https://api.discogs.com"
 
     def _get(self, endpoint: str, token: str) -> dict:
-        response = requests.get(
-            f"{self.base_url}{endpoint}",
-            headers={"Authorization": f"Discogs token={token}"},
-        )
-        response.raise_for_status()
-        return response.json()
+        try:
+            logger.info(f"GET {self.base_url}{endpoint}")
+            response = requests.get(
+                f"{self.base_url}{endpoint}",
+                headers={"Authorization": f"Discogs token={token}"},
+            )
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            logger.error(f"Failed to GET {self.base_url}{endpoint}: {e}")
+            raise
 
     def get_username(self, token: str) -> str:
         return self._get("/oauth/identity", token)["username"]
