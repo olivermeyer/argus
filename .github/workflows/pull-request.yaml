@@ -1,0 +1,16 @@
+name: pull-request
+
+on:
+  pull_request:
+      types: [ "opened", "reopened", "synchronize", "edited" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: poetry install

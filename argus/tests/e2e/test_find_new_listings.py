@@ -1,3 +1,6 @@
+import asyncio
+
+import pytest
 from sqlmodel import Session, select
 
 from argus.discogs.models.condition import Condition
@@ -7,6 +10,7 @@ from argus.tasks.find_new_listings import find_new_listings
 from argus.user import User
 
 
+@pytest.mark.asyncio
 def test_find_new_listings_for_new_release(
     mock_get_release_listings_page,
     mock_get_wantlist_item_ids,
@@ -31,6 +35,7 @@ def test_find_new_listings_for_new_release(
     assert telegram.send.call_count == 0
 
 
+@pytest.mark.asyncio
 def test_find_new_listings_for_existing_release(
     mock_get_release_listings_page,
     mock_get_wantlist_item_ids,
