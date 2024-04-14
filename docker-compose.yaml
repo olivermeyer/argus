@@ -15,7 +15,7 @@ services:
     command: -config.file=/etc/loki/config.yaml
     restart: unless-stopped
     volumes:
-      - ./data/loki:/etc/loki
+      - ./config/loki:/etc/loki
 
   grafana:
     restart: unless-stopped
@@ -45,5 +45,5 @@ services:
     image: grafana/grafana:latest
     volumes:
       - ./data/grafana:/var/lib/grafana
-    ports:
-      - "3000:3000"
+#    ports:
+#      - "3000:3000"
