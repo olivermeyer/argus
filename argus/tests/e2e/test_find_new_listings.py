@@ -8,14 +8,16 @@ from argus.tasks.find_new_listings import find_new_listings
 
 
 def test_find_new_listings_for_new_release(
-        mock_get_release_listings_page,
-        mock_get_wantlist_item_ids,
-        engine,
-        telegram,
+    mock_get_release_listings_page,
+    mock_get_wantlist_item_ids,
+    engine,
+    telegram,
 ):
     # Given
     with Session(engine) as session:
-        session.add(User(name="test", discogs_token="with_wantlist", telegram_chat_id=1))
+        session.add(
+            User(name="test", discogs_token="with_wantlist", telegram_chat_id=1)
+        )
         session.commit()
     # When
     find_new_listings(
@@ -30,15 +32,19 @@ def test_find_new_listings_for_new_release(
 
 
 def test_find_new_listings_for_existing_release(
-        mock_get_release_listings_page,
-        mock_get_wantlist_item_ids,
-        engine,
-        telegram,
+    mock_get_release_listings_page,
+    mock_get_wantlist_item_ids,
+    engine,
+    telegram,
 ):
     # Given
     with Session(engine) as session:
-        session.add(User(name="test", discogs_token="with_wantlist", telegram_chat_id=1))
-        session.add(User(name="test2", discogs_token="without_wantlist", telegram_chat_id=2))
+        session.add(
+            User(name="test", discogs_token="with_wantlist", telegram_chat_id=1)
+        )
+        session.add(
+            User(name="test2", discogs_token="without_wantlist", telegram_chat_id=2)
+        )
         session.add(
             Listing(
                 release_id=10105811,

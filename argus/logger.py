@@ -10,25 +10,19 @@ class Logger(logging.Logger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
 
-        self.loki_url = kwargs.get('loki_url', None)
-        self.labels = kwargs.get('labels', {})
+        self.loki_url = kwargs.get("loki_url", None)
+        self.labels = kwargs.get("labels", {})
 
     def log_to_loki(self, msg, level: str):
         payload = {
             "streams": [
                 {
-                    "stream": {
-                        "application": "argus"
-                    },
-                    "values": [
-                        [str(time.time_ns()), f"[{level}] {msg}"]
-                    ]
+                    "stream": {"application": "argus"},
+                    "values": [[str(time.time_ns()), f"[{level}] {msg}"]],
                 }
             ]
         }
-        headers = {
-            'Content-type': 'application/json'
-        }
+        headers = {"Content-type": "application/json"}
         payload = json.dumps(payload)
         response = requests.post(self.loki_url, data=payload, headers=headers)
         response.raise_for_status()
@@ -37,7 +31,7 @@ class Logger(logging.Logger):
     def get_labels_string(self, labels_map):
         labels_string = "{"
         for key, value in labels_map.items():
-            labels_string += f"{key}=\"{value}\", "
+            labels_string += f'{key}="{value}", '
         # Remove the trailing comma and space
         labels_string = labels_string.rstrip(", ")
         labels_string += "}"

@@ -23,14 +23,18 @@ def mock_get_wantlist_item_ids():
             return {10105811}
         return set()
 
-    with patch("argus.discogs.clients.api.DiscogsApiClient.get_wantlist_item_ids") as mock:
+    with patch(
+        "argus.discogs.clients.api.DiscogsApiClient.get_wantlist_item_ids"
+    ) as mock:
         mock.side_effect = return_value
         yield
 
 
 @pytest.fixture
 def mock_get_release_listings_page():
-    with patch("argus.discogs.clients.web.DiscogsWebClient.get_release_listings_page") as mock:
+    with patch(
+        "argus.discogs.clients.web.DiscogsWebClient.get_release_listings_page"
+    ) as mock:
         future = asyncio.Future()
         path = os.path.join(os.path.dirname(__file__), "fixtures/release_listings.html")
         with open(path) as f:

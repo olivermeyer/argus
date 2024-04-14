@@ -16,26 +16,30 @@ from argus.user import User
 
 
 def find_new_listings(
-        telegram: TelegramClient,
-        engine: Engine = _engine,
-        discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
-        discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
+    telegram: TelegramClient,
+    engine: Engine = _engine,
+    discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
+    discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
 ):
     for user in User.fetch_all(engine=engine):
         WantlistItem.update(user, client=discogs_api_client, engine=engine)
-    asyncio.run(_process_releases(engine=engine, client=discogs_web_client, telegram=telegram))
+    asyncio.run(
+        _process_releases(engine=engine, client=discogs_web_client, telegram=telegram)
+    )
     Listing.clean(engine=engine)
 
 
 async def _process_releases(
-        engine: Engine,
-        client: DiscogsWebClient,
-        telegram: TelegramClient,
+    engine: Engine,
+    client: DiscogsWebClient,
+    telegram: TelegramClient,
 ) -> None:
     tasks = []
     for release_id in WantlistItem.fetch_all_release_ids(engine=engine):
         tasks.append(
-            _process_release(release_id=release_id, engine=engine, client=client, telegram=telegram)
+            _process_release(
+                release_id=release_id, engine=engine, client=client, telegram=telegram
+            )
         )
     for task in asyncio.as_completed(tasks):
         try:
@@ -46,10 +50,10 @@ async def _process_releases(
 
 
 async def _process_release(
-        release_id: int,
-        engine: Engine,
-        client: DiscogsWebClient,
-        telegram: TelegramClient,
+    release_id: int,
+    engine: Engine,
+    client: DiscogsWebClient,
+    telegram: TelegramClient,
 ) -> None:
     discogs_listings = await Listings.on_discogs(release_id, client=client)
     db_listings = await Listings.in_db(release_id, engine=engine)
@@ -57,7 +61,9 @@ async def _process_release(
         if new_listings := [
             listing for listing in discogs_listings if listing not in db_listings
         ]:
-            logger.info(f"Found {len(new_listings)} new listings for release {release_id}")
+            logger.info(
+                f"Found {len(new_listings)} new listings for release {release_id}"
+            )
             for listing in new_listings:
                 await notify_users(listing, engine=engine, telegram=telegram)
         else:
@@ -66,10 +72,10 @@ async def _process_release(
 
 
 def main(
-        telegram: TelegramClient,
-        engine: Engine,
-        discogs_api_client: DiscogsApiClient,
-        discogs_web_client: DiscogsWebClient,
+    telegram: TelegramClient,
+    engine: Engine,
+    discogs_api_client: DiscogsApiClient,
+    discogs_web_client: DiscogsWebClient,
 ):
     while True:
         find_new_listings(

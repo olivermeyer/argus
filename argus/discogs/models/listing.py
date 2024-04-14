@@ -75,7 +75,6 @@ class Listing(SQLModel, table=True):
             seller=seller,
         )
 
-
     @staticmethod
     def _derive_condition(text: str) -> Condition:
         logger.debug(f"Deriving condition from text: {text}")
@@ -142,4 +141,6 @@ class Listings:
     async def in_db(release_id: int, engine: Engine) -> Sequence[Listing]:
         logger.info(f"Fetching listings for release {release_id} from the database")
         with Session(engine) as session:
-            return session.exec(select(Listing).where(Listing.release_id == release_id)).all()
+            return session.exec(
+                select(Listing).where(Listing.release_id == release_id)
+            ).all()

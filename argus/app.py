@@ -30,23 +30,29 @@ argus.add_command(find_new_listings)
 
 
 @click.command()
-@click.option('--name', required=True, help='Name of the user.')
-@click.option('--discogs_token', required=True, help='Discogs token for the user.')
-@click.option('--telegram_chat_id', required=True, help='Telegram chat ID for the user.')
-@click.option('--telegram_chat_id', required=True, help='Telegram chat ID for the user.')
-@click.option('--warn_on_error', default=False, help='Whether to warn the user in case of errors.')
+@click.option("--name", required=True, help="Name of the user.")
+@click.option("--discogs_token", required=True, help="Discogs token for the user.")
+@click.option(
+    "--telegram_chat_id", required=True, help="Telegram chat ID for the user."
+)
+@click.option(
+    "--telegram_chat_id", required=True, help="Telegram chat ID for the user."
+)
+@click.option(
+    "--warn_on_error", default=False, help="Whether to warn the user in case of errors."
+)
 def add_user(
-        name: str,
-        discogs_token: str,
-        telegram_chat_id: str,
-        warn_on_error: bool,
+    name: str,
+    discogs_token: str,
+    telegram_chat_id: str,
+    warn_on_error: bool,
 ) -> None:
     _add_user(
         name=name,
         discogs_token=discogs_token,
         telegram_chat_id=telegram_chat_id,
         warn_on_error=warn_on_error,
-        engine=engine
+        engine=engine,
     )
 
 

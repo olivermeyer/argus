@@ -18,6 +18,7 @@ retry = "^0.9.2"
 currency-symbols = "^2.0.3"
 curl-cffi = "^0.5.10"
 sqlmodel = "^0.0.16"
+black = "^24.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.2"

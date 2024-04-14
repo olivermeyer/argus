@@ -21,7 +21,9 @@ class WantlistItem(SQLModel, table=True):
                     select(WantlistItem).where(WantlistItem.user_id == user.id)
                 ).all():
                     session.delete(result)
-                for release_id in client.get_wantlist_item_ids(token=user.discogs_token):
+                for release_id in client.get_wantlist_item_ids(
+                    token=user.discogs_token
+                ):
                     session.add(WantlistItem(user_id=user.id, release_id=release_id))
                 session.commit()
         except Exception as e:
@@ -36,5 +38,7 @@ class WantlistItem(SQLModel, table=True):
             with Session(engine) as session:
                 return set(session.exec(select(WantlistItem.release_id)).all())
         except Exception as e:
-            logger.error(f"Failed to fetch all release IDs in the WantlistItem table: {e}")
+            logger.error(
+                f"Failed to fetch all release IDs in the WantlistItem table: {e}"
+            )
             raise
