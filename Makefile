@@ -8,7 +8,7 @@ start-dev:  ## Starts all containers (dev)
 	docker-compose -f docker-compose.dev.yaml up --build -d
 
 start-prod:  ## Starts all containers (prod)
-	docker-compose -f docker-compose.dev.yaml up --build -d
+	docker-compose -f docker-compose.prod.yaml up --build -d
 
 stop-dev:  ## Stops all containers
 	docker-compose -f docker-compose.dev.yaml down
