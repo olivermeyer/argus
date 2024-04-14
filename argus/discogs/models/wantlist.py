@@ -1,5 +1,5 @@
 from sqlalchemy import Engine
-from sqlmodel import SQLModel, Session, select, Field
+from sqlmodel import Field, Session, SQLModel, select
 
 from argus.discogs.clients.api import DiscogsApiClient
 from argus.logger import logger

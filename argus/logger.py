@@ -1,9 +1,9 @@
+import json
 import logging
 import os
 import time
 
 import requests
-import json
 
 
 class Logger(logging.Logger):

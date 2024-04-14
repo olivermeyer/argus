@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from sqlalchemy import Engine
-from sqlmodel import SQLModel, select, Session, Field
+from sqlmodel import Field, Session, SQLModel, select
 
 from argus.logger import logger
 

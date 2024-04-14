@@ -1,11 +1,10 @@
 import asyncio
 import os
-from unittest.mock import patch, Mock, AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
-from sqlmodel import SQLModel
-
 from sqlalchemy import create_engine
+from sqlmodel import SQLModel
 
 
 @pytest.fixture

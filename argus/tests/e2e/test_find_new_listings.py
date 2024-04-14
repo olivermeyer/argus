@@ -3,8 +3,8 @@ from sqlmodel import Session, select
 from argus.discogs.models.condition import Condition
 from argus.discogs.models.listing import Listing
 from argus.discogs.models.wantlist import WantlistItem
-from argus.user import User
 from argus.tasks.find_new_listings import find_new_listings
+from argus.user import User
 
 
 def test_find_new_listings_for_new_release(

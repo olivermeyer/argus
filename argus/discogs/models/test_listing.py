@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from argus.discogs.models.listing import Listing, ListingsPage, Condition
+from argus.discogs.models.listing import Condition, Listing, ListingsPage
 
 
 def test_sort_should_sort_correctly():

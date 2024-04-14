@@ -4,7 +4,7 @@ from typing import Sequence
 from bs4 import BeautifulSoup, ResultSet
 from currency_symbols import CurrencySymbols
 from sqlalchemy import Engine
-from sqlmodel import SQLModel, Field, Session, select
+from sqlmodel import Field, Session, SQLModel, select
 
 from argus.discogs.clients.web import DiscogsWebClient
 from argus.discogs.models.condition import Condition

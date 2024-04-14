@@ -6,8 +6,8 @@ from sqlmodel import SQLModel
 from argus.db import engine
 from argus.discogs.clients.api import DiscogsApiClient
 from argus.discogs.clients.web import DiscogsWebClient
-from argus.tasks.find_new_listings import main as _find_new_listings
 from argus.tasks.add_user import main as _add_user
+from argus.tasks.find_new_listings import main as _find_new_listings
 from argus.telegram_.client import TelegramClient
 
 

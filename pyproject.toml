@@ -19,6 +19,10 @@ currency-symbols = "^2.0.3"
 curl-cffi = "^0.5.10"
 sqlmodel = "^0.0.16"
 black = "^24.4.0"
+ruff = "^0.3.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.2"
+
+[tool.ruff]
+lint.extend-select = ["I"]

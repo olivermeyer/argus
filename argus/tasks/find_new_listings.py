@@ -5,9 +5,9 @@ from sqlalchemy.engine import Engine
 
 from argus.db import engine as _engine
 from argus.discogs.clients.api import DiscogsApiClient
-from argus.discogs.models.listing import Listings, Listing
-from argus.discogs.models.wantlist import WantlistItem
 from argus.discogs.clients.web import DiscogsWebClient
+from argus.discogs.models.listing import Listing, Listings
+from argus.discogs.models.wantlist import WantlistItem
 from argus.error import Error
 from argus.logger import logger
 from argus.services.notification import notify_users

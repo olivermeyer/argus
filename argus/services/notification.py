@@ -1,14 +1,14 @@
 from typing import Union
 
 from sqlalchemy import Engine
-from sqlmodel import select, Session, col
+from sqlmodel import Session, col, select
 
 from argus.discogs.models.listing import Listing
 from argus.discogs.models.wantlist import WantlistItem
 from argus.error import Error
 from argus.logger import logger
 from argus.telegram_.client import TelegramClient
-from argus.telegram_.messages import NewListingMessage, ErrorMessage
+from argus.telegram_.messages import ErrorMessage, NewListingMessage
 from argus.user import User
 
 NotificationTypes = Union[Listing, Error]

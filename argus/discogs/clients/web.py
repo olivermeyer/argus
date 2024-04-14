@@ -1,5 +1,4 @@
 from curl_cffi.requests import AsyncSession
-from requests import Response
 
 from argus.logger import logger
 

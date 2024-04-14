@@ -3,7 +3,7 @@ from typing import Union
 import telegram
 
 from argus.logger import logger
-from argus.telegram_.messages import NewListingMessage, ErrorMessage
+from argus.telegram_.messages import ErrorMessage, NewListingMessage
 
 Message = Union[NewListingMessage, ErrorMessage]
 
