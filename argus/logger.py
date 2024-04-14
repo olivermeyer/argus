@@ -2,18 +2,18 @@ import json
 import logging
 import os
 import time
+from typing import Any
 
 import requests
 
 
 class Logger(logging.Logger):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args)
-
         self.loki_url = kwargs.get("loki_url", None)
         self.labels = kwargs.get("labels", {})
 
-    def log_to_loki(self, msg, level: str):
+    def log_to_loki(self, msg: object, level: str):
         payload = {
             "streams": [
                 {
@@ -28,32 +28,23 @@ class Logger(logging.Logger):
         response.raise_for_status()
         return response
 
-    def get_labels_string(self, labels_map):
-        labels_string = "{"
-        for key, value in labels_map.items():
-            labels_string += f'{key}="{value}", '
-        # Remove the trailing comma and space
-        labels_string = labels_string.rstrip(", ")
-        labels_string += "}"
-        return labels_string
-
-    def info(self, msg, *args, **kwargs):
+    def info(self, msg: object, *args: Any, **kwargs: Any):
         self.log_to_loki(msg, "INFO")
         super().info(msg, *args, **kwargs)
 
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg: object, *args: Any, **kwargs: Any):
         # self.log_to_loki(msg, "DEBUG")
         super().debug(msg, *args, **kwargs)
 
-    def warning(self, msg, *args, **kwargs):
+    def warning(self, msg: object, *args: Any, **kwargs: Any):
         self.log_to_loki(msg, "WARNING")
         super().warning(msg, *args, **kwargs)
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg: object, *args: Any, **kwargs: Any):
         self.log_to_loki(msg, "ERROR")
         super().error(msg, *args, **kwargs)
 
-    def critical(self, msg, *args, **kwargs):
+    def critical(self, msg: object, *args: Any, **kwargs: Any):
         self.log_to_loki(msg, "CRITICAL")
         super().critical(msg, *args, **kwargs)
 

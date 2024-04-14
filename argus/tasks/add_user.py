@@ -7,7 +7,7 @@ from argus.user import User
 def main(
     name: str,
     discogs_token: str,
-    telegram_chat_id: str,
+    telegram_chat_id: int,
     warn_on_error: bool,
     engine: Engine,
 ):

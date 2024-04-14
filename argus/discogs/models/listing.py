@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Sequence
 
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup, ResultSet, Tag
 from currency_symbols import CurrencySymbols
 from sqlalchemy import Engine
 from sqlmodel import Field, Session, SQLModel, select
@@ -12,7 +12,7 @@ from argus.logger import logger
 
 
 class Listing(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     release_id: int = Field(foreign_key="listing.release_id")
     listing_id: int
     title: str
@@ -24,10 +24,10 @@ class Listing(SQLModel, table=True):
     currency: str
     seller: str
 
-    def __lt__(self, other: "Listing"):
+    def __lt__(self, other: "Listing") -> bool:
         return self.listing_id < other.listing_id
 
-    def __eq__(self, other: "Listing"):
+    def __eq__(self, other: "Listing") -> bool:
         return self.listing_id == other.listing_id
 
     @property
@@ -38,9 +38,15 @@ class Listing(SQLModel, table=True):
         return f"{currency_symbol}{self.price}"
 
     @staticmethod
-    def from_discogs(listing: ResultSet) -> "Listing":
+    def from_discogs(listing) -> "Listing":
         """Parses a listing."""
         logger.debug(f"Parsing listing:\n{listing}")
+        release_id = int(
+            listing.find("a", {"class": "item_release_link"})
+            .attrs["href"]
+            .split("/")[-1]
+            .split("-")[0]
+        )
         item_description_title = listing.find("a", {"class": "item_description_title"})
         title = item_description_title.text
         href = item_description_title.attrs["href"]
@@ -64,6 +70,7 @@ class Listing(SQLModel, table=True):
         price = float(price_span["data-pricevalue"])
         seller = seller_info.find("div", {"class": "seller_block"}).find("a").text
         return Listing(
+            release_id=release_id,
             title=title,
             url=url,
             listing_id=int(listing_id),
@@ -121,7 +128,7 @@ class ListingsPage:
     def from_html(html: str) -> "ListingsPage":
         logger.debug(f"Parsing listings in page:\n{html}")
         soup = BeautifulSoup(html, "html.parser")
-        listings = soup.find_all("tr", {"class": "shortcut_navigable"})
+        listings: ResultSet[Tag] = soup.find_all("tr", {"class": "shortcut_navigable"})
         logger.debug(f"Found {len(listings)} listings")
         return ListingsPage(
             listings=[Listing.from_discogs(listing) for listing in listings]
@@ -132,9 +139,6 @@ class Listings:
     @staticmethod
     async def on_discogs(release_id: int, client: DiscogsWebClient) -> list[Listing]:
         listings_page = await ListingsPage.fetch(release_id, client)
-        # TODO: do this somewhere else
-        for listing in listings_page.listings:
-            listing.release_id = release_id
         return listings_page.listings
 
     @staticmethod

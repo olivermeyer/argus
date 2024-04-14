@@ -1,3 +1,5 @@
+from typing import Any
+
 import requests
 
 from argus.logger import logger
@@ -6,7 +8,7 @@ from argus.logger import logger
 class DiscogsApiClient:
     base_url: str = "https://api.discogs.com"
 
-    def _get(self, endpoint: str, token: str) -> dict:
+    def _get(self, endpoint: str, token: str) -> dict[str, Any]:
         try:
             logger.info(f"GET {self.base_url}{endpoint}")
             response = requests.get(

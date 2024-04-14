@@ -8,6 +8,7 @@ from argus.discogs.models.listing import Condition, Listing, ListingsPage
 def test_sort_should_sort_correctly():
     first = Listing(
         listing_id=1,
+        release_id=100,
         title="First listing",
         url="www.listing.com",
         media_condition=Condition.GENERIC,
@@ -19,6 +20,7 @@ def test_sort_should_sort_correctly():
     )
     second = Listing(
         listing_id=2,
+        release_id=100,
         title="Second listing",
         url="www.listing.com",
         media_condition=Condition.GENERIC,
@@ -35,6 +37,8 @@ def test_price_as_string_should_return_expected_value():
     assert (
         Listing(
             id=1,
+            listing_id=100,
+            release_id=200,
             title="First listing",
             url="www.listing.com",
             media_condition=Condition.GENERIC,
@@ -51,7 +55,9 @@ def test_price_as_string_should_return_expected_value():
 def test_price_as_string_should_raise_exception_for_invalid_currency():
     with pytest.raises(ValueError):
         Listing(
-            id="1",
+            id=1,
+            release_id=100,
+            listing_id=100,
             title="First listing",
             url="www.listing.com",
             media_condition=Condition.GENERIC,
@@ -68,6 +74,7 @@ def test_should_parse_release_listings_page():
         assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted(
             [
                 Listing(
+                    release_id=10105811,
                     listing_id=2142025490,
                     title="Jode (3) - Jode (LP, Album)",
                     url="https://discogs.com/sell/item/2142025490",
@@ -79,6 +86,7 @@ def test_should_parse_release_listings_page():
                     seller="ErlonSilva",
                 ),
                 Listing(
+                    release_id=10105811,
                     title="Jode (3) - Jode (LP, Album)",
                     url="https://discogs.com/sell/item/1506778963",
                     listing_id=1506778963,
@@ -98,6 +106,7 @@ def test_should_parse_master_listings_page():
         assert sorted(ListingsPage.from_html(fh.read()).listings) == sorted(
             [
                 Listing(
+                    release_id=10105811,
                     listing_id=2703709795,
                     title="Esa (6) - Esa (LP, Album)",
                     url="https://discogs.com/sell/item/2703709795",
@@ -109,6 +118,7 @@ def test_should_parse_master_listings_page():
                     seller="badou0032",
                 ),
                 Listing(
+                    release_id=10105811,
                     listing_id=2643428466,
                     title="Esa (6) - Esa (LP, Album)",
                     url="https://discogs.com/sell/item/2643428466",

@@ -1,6 +1,7 @@
 import os
 
 import click
+from sqlalchemy import Engine
 from sqlmodel import SQLModel
 
 from argus.db import engine
@@ -19,7 +20,7 @@ def argus():
 @click.command()
 def find_new_listings() -> None:
     _find_new_listings(
-        telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN")),
+        telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN", "")),
         engine=engine,
         discogs_api_client=DiscogsApiClient(),
         discogs_web_client=DiscogsWebClient(),
@@ -44,7 +45,7 @@ argus.add_command(find_new_listings)
 def add_user(
     name: str,
     discogs_token: str,
-    telegram_chat_id: str,
+    telegram_chat_id: int,
     warn_on_error: bool,
 ) -> None:
     _add_user(
@@ -59,7 +60,7 @@ def add_user(
 argus.add_command(add_user)
 
 
-def init_db(engine):
+def init_db(engine: Engine):
     with engine.connect() as connection:
         if not engine.dialect.has_table(connection, "user"):
             SQLModel.metadata.create_all(engine)
