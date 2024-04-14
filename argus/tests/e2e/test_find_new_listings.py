@@ -1,5 +1,3 @@
-import asyncio
-
 import pytest
 from sqlmodel import Session, select
 
