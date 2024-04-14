@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     volumes:
         - ./data/argus:/var/argus
+        - ./argus:/var/local/argus/argus
     env_file:
       - .env
     environment:
