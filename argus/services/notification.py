@@ -14,13 +14,13 @@ from argus.user import User
 NotificationTypes = Union[Listing, Error]
 
 
-async def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
+def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about new listing {listing.listing_id}")
     message = NewListingMessage(listing).prepare()
-    await telegram.send(message, user.telegram_chat_id)
+    telegram.send(message, user.telegram_chat_id)
 
 
-async def notify_users_for_new_listing(
+def notify_users_for_new_listing(
     listing: Listing, engine: Engine, telegram: TelegramClient
 ):
     with Session(engine) as session:
@@ -37,30 +37,28 @@ async def notify_users_for_new_listing(
             )
         ).all()
         for user in users:
-            await notify_new_listing(user, listing, telegram)
+            notify_new_listing(user, listing, telegram)
 
 
-async def notify_new_error(user: User, error: Error, telegram: TelegramClient):
+def notify_new_error(user: User, error: Error, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about {error.text}")
     message = ErrorMessage(error).prepare()
-    await telegram.send(message, user.telegram_chat_id)
+    telegram.send(message, user.telegram_chat_id)
 
 
-async def notify_users_for_error(
-    error: Error, engine: Engine, telegram: TelegramClient
-):
+def notify_users_for_error(error: Error, engine: Engine, telegram: TelegramClient):
     with Session(engine) as session:
         users = session.exec(select(User).where(User.warn_on_error)).all()
         for user in users:
-            await notify_new_error(user, error, telegram)
+            notify_new_error(user, error, telegram)
 
 
-async def notify_users(
+def notify_users(
     notification: NotificationTypes, engine: Engine, telegram: TelegramClient
 ):
     if isinstance(notification, Listing):
-        await notify_users_for_new_listing(notification, engine, telegram)
+        notify_users_for_new_listing(notification, engine, telegram)
     elif isinstance(notification, Error):
-        await notify_users_for_error(notification, engine, telegram)
+        notify_users_for_error(notification, engine, telegram)
     else:
         raise ValueError(f"Unexpected notification type: {type(notification)}")

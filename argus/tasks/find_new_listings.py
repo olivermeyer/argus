@@ -42,12 +42,12 @@ async def _process_releases(
                 release_id=release_id, engine=engine, client=client, telegram=telegram
             )
         )
-    for task in asyncio.as_completed(tasks):
+    for task in asyncio.as_completed(tasks, timeout=10):
         try:
             await task
         except Exception as e:
             logger.error(f"Error while processing release: {str(e)}")
-            await notify_users(Error(text=str(e)), engine=engine, telegram=telegram)
+            notify_users(Error(text=str(e)), engine=engine, telegram=telegram)
 
 
 async def _process_release(
@@ -66,7 +66,7 @@ async def _process_release(
                 f"Found {len(new_listings)} new listings for release {release_id}"
             )
             for listing in new_listings:
-                await notify_users(listing, engine=engine, telegram=telegram)
+                notify_users(listing, engine=engine, telegram=telegram)
         else:
             logger.info(f"No new listings for release {release_id}")
     if not discogs_listings:
