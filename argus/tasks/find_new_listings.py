@@ -6,6 +6,7 @@ from sqlalchemy.engine import Engine
 from argus.db import engine as _engine
 from argus.discogs.clients.api import DiscogsApiClient
 from argus.discogs.clients.web import DiscogsWebClient
+from argus.discogs.models.condition import Condition
 from argus.discogs.models.listing import Listing, Listings
 from argus.discogs.models.wantlist import WantlistItem
 from argus.error import Error
@@ -68,6 +69,21 @@ async def _process_release(
                 await notify_users(listing, engine=engine, telegram=telegram)
         else:
             logger.info(f"No new listings for release {release_id}")
+    if not discogs_listings:
+        discogs_listings = [
+            Listing(
+                release_id=release_id,
+                listing_id=-1,
+                title="Dummy release",
+                url="http://dummy.com",
+                media_condition=Condition.GENERIC,
+                sleeve_condition=Condition.GENERIC,
+                ships_from="Nowhere",
+                price=0,
+                currency="EUR",
+                seller="Nobody",
+            )
+        ]
     Listing.update(release_id, discogs_listings, engine=engine)
 
 
