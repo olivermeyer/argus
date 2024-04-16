@@ -22,12 +22,19 @@ def find_new_listings(
     discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
     discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
 ):
-    for user in User.fetch_all(engine=engine):
-        WantlistItem.update(user, client=discogs_api_client, engine=engine)
-    asyncio.run(
-        _process_releases(engine=engine, client=discogs_web_client, telegram=telegram)
-    )
-    Listing.clean(engine=engine)
+    try:
+        for user in User.fetch_all(engine=engine):
+            WantlistItem.update(user, client=discogs_api_client, engine=engine)
+        asyncio.run(
+            _process_releases(
+                engine=engine, client=discogs_web_client, telegram=telegram
+            )
+        )
+        Listing.clean(engine=engine)
+    except Exception as e:
+        message = f"Failed to find new listings: {e}"
+        logger.error(message)
+        notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
 async def _process_releases(
@@ -46,8 +53,9 @@ async def _process_releases(
         try:
             await task
         except Exception as e:
-            logger.error(f"Error while processing release: {str(e)}")
-            notify_users(Error(text=str(e)), engine=engine, telegram=telegram)
+            message = f"Failed to process release: {str(e)}"
+            logger.error(message)
+            notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
 async def _process_release(
