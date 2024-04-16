@@ -4,6 +4,38 @@ from argus.discogs.models.listing import Listing
 from argus.error import Error
 
 
+def clean(string: str) -> str:
+    """
+    Prefixes certain characters with a backslash.
+
+    The list of characters is taken from
+    https://core.telegram.org/bots/api#sendmessage.
+    """
+    reserved_chars = [
+        "_",
+        "*",
+        "[",
+        "]",
+        "(",
+        ")",
+        "~",
+        "`",
+        ">",
+        "#",
+        "+",
+        "-",
+        "=",
+        "|",
+        "{",
+        "}",
+        ".",
+        "!",
+    ]
+    for char in reserved_chars:
+        string = string.replace(char, f"\\{char}")
+    return string
+
+
 @dataclass
 class NewListingMessage:
     listing: Listing
@@ -18,44 +50,8 @@ class NewListingMessage:
             sf=self.listing.ships_from,
         )
         third_line = f"View on [Discogs]({self.listing.url})"
-        self.text = (
-            f"*{self.clean_string(first_line)}*\n"
-            f"{self.clean_string(second_line)}\n"
-            f"{third_line}"
-        )
+        self.text = f"*{clean(first_line)}*\n" f"{clean(second_line)}\n" f"{third_line}"
         return self
-
-    @staticmethod
-    def clean_string(string: str) -> str:
-        """
-        Prefixes certain characters with a backslash.
-
-        The list of characters is taken from
-        https://core.telegram.org/bots/api#sendmessage.
-        """
-        reserved_chars = [
-            "_",
-            "*",
-            "[",
-            "]",
-            "(",
-            ")",
-            "~",
-            "`",
-            ">",
-            "#",
-            "+",
-            "-",
-            "=",
-            "|",
-            "{",
-            "}",
-            ".",
-            "!",
-        ]
-        for char in reserved_chars:
-            string = string.replace(char, f"\\{char}")
-        return string
 
 
 @dataclass
@@ -64,5 +60,5 @@ class ErrorMessage:
     text: str = ""
 
     def prepare(self):
-        self.text = f"\\[v2\\] {self.error.text}"
+        self.text = clean(f"\\[v2\\] {self.error.text}")
         return self
