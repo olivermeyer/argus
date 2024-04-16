@@ -5,7 +5,7 @@ on:
       types: [ "opened", "reopened", "synchronize", "edited" ]
 
 jobs:
-  build:
+  run-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
