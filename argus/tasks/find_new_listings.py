@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from time import sleep
 
 from sqlalchemy.engine import Engine
@@ -30,9 +31,9 @@ async def find_new_listings(
             engine=engine, client=discogs_web_client, telegram=telegram
         )
         Listing.clean(engine=engine)
-    except Exception as e:
-        message = f"Failed to find new listings: {e}"
-        logger.error(message)
+    except Exception:
+        message = "Failed to find new listings"
+        logger.error(f"{message}: {traceback.format_exc()}")
         await notify_users(Error(text=message), engine=engine, telegram=telegram)
     finally:
         logger.info("END - find_new_listings")
@@ -53,9 +54,9 @@ async def _process_releases(
     for task in asyncio.as_completed(tasks, timeout=30):
         try:
             await task
-        except Exception as e:
-            message = f"Failed to process release: {e}"
-            logger.error(message)
+        except Exception:
+            message = "Failed to process release"
+            logger.error(f"{message}: {traceback.format_exc()}")
             await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
