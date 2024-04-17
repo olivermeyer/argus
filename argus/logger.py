@@ -42,7 +42,7 @@ class Logger(logging.Logger):
         super().info(msg, *args, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
-        # self.log_to_loki(msg, "DEBUG")
+        self.log_to_loki(msg, "DEBUG")
         super().debug(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):

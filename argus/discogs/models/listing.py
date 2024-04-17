@@ -40,7 +40,6 @@ class Listing(SQLModel, table=True):
     @staticmethod
     def from_discogs(listing: ResultSet) -> "Listing":
         """Parses a listing."""
-        logger.debug(f"Parsing listing:\n{listing}")
         item_description_title = listing.find("a", {"class": "item_description_title"})
         title = item_description_title.text
         href = item_description_title.attrs["href"]
@@ -77,7 +76,7 @@ class Listing(SQLModel, table=True):
 
     @staticmethod
     def _derive_condition(text: str) -> Condition:
-        logger.debug(f"Deriving condition from text: {text}")
+        logger.debug("Trying to derive condition from text")
         for condition in Condition:
             if condition.value.full in text:
                 logger.debug(f"Found condition: {condition}")
@@ -119,7 +118,6 @@ class ListingsPage:
 
     @staticmethod
     def from_html(html: str) -> "ListingsPage":
-        logger.debug(f"Parsing listings in page:\n{html}")
         soup = BeautifulSoup(html, "html.parser")
         listings = soup.find_all("tr", {"class": "shortcut_navigable"})
         logger.debug(f"Found {len(listings)} listings")
