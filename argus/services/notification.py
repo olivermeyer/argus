@@ -1,3 +1,4 @@
+import asyncio
 from typing import Union
 
 from sqlalchemy import Engine
@@ -14,10 +15,18 @@ from argus.user import User
 NotificationTypes = Union[Listing, Error]
 
 
+def _notify(message, user: User, telegram: TelegramClient) -> None:
+    try:
+        asyncio.get_running_loop()
+        telegram.send(message, user.telegram_chat_id)
+    except RuntimeError:
+        asyncio.run(telegram.send(message, user.telegram_chat_id))
+
+
 def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about new listing {listing.listing_id}")
     message = NewListingMessage(listing).prepare()
-    telegram.send(message, user.telegram_chat_id)
+    _notify(message=message, user=user, telegram=telegram)
 
 
 def notify_users_for_new_listing(
@@ -43,7 +52,7 @@ def notify_users_for_new_listing(
 def notify_new_error(user: User, error: Error, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about {error.text}")
     message = ErrorMessage(error).prepare()
-    telegram.send(message, user.telegram_chat_id)
+    _notify(message=message, user=user, telegram=telegram)
 
 
 def notify_users_for_error(error: Error, engine: Engine, telegram: TelegramClient):

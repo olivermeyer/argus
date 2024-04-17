@@ -1,9 +1,12 @@
+from unittest.mock import patch
+
 import pytest
 from sqlmodel import Session, select
 
 from argus.discogs.models.listing import Listing
 from argus.discogs.models.wantlist import WantlistItem
 from argus.tasks.find_new_listings import find_new_listings
+from argus.telegram_.messages import ErrorMessage, NewListingMessage
 from argus.tests.conftest import listing_factory
 from argus.user import User
 
@@ -118,3 +121,90 @@ def test_find_new_listings_for_existing_release(
         assert len(session.exec(select(WantlistItem)).all()) == 1
         assert len(session.exec(select(Listing)).all()) == 2
     assert telegram.send.call_count == 1
+    assert isinstance(telegram.send.call_args.args[0], NewListingMessage)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "listings",
+    [[]],
+)
+@patch("argus.discogs.models.listing.Listings.in_db")
+def test_find_new_listings_should_send_error_to_telegram_for_exception_in_process_release(
+    mock_listings_on_db,
+    mock_listings_on_discogs,
+    mock_get_wantlist_item_ids,
+    engine,
+    telegram,
+):
+    """"""
+
+    # Given
+    def raise_exception(*args, **kwargs):
+        raise RuntimeError("Some error")
+
+    mock_listings_on_db.side_effect = raise_exception
+    with Session(engine) as session:
+        session.add(
+            User(
+                name="test",
+                discogs_token="with_wantlist",
+                telegram_chat_id=1,
+                warn_on_error=True,
+            )
+        )
+        session.commit()
+    # When
+    find_new_listings(
+        engine=engine,
+        telegram=telegram,
+    )
+    # Then
+    with Session(engine) as session:
+        assert len(session.exec(select(WantlistItem)).all()) == 1
+        assert len(session.exec(select(Listing)).all()) == 0
+    assert telegram.send.call_count == 1
+    assert isinstance(telegram.send.call_args.args[0], ErrorMessage)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "listings",
+    [[]],
+)
+@patch("argus.user.User.fetch_all")
+def test_find_new_listings_should_send_error_to_telegram_for_exception_in_find_new_listing(
+    mock_user_fetch_all,
+    mock_listings_on_discogs,
+    mock_get_wantlist_item_ids,
+    engine,
+    telegram,
+):
+    """"""
+
+    # Given
+    def raise_exception(*args, **kwargs):
+        raise RuntimeError("Some error")
+
+    mock_user_fetch_all.side_effect = raise_exception
+    with Session(engine) as session:
+        session.add(
+            User(
+                name="test",
+                discogs_token="with_wantlist",
+                telegram_chat_id=1,
+                warn_on_error=True,
+            )
+        )
+        session.commit()
+    # When
+    find_new_listings(
+        engine=engine,
+        telegram=telegram,
+    )
+    # Then
+    with Session(engine) as session:
+        assert len(session.exec(select(WantlistItem)).all()) == 0
+        assert len(session.exec(select(Listing)).all()) == 0
+    assert telegram.send.call_count == 1
+    assert isinstance(telegram.send.call_args.args[0], ErrorMessage)
