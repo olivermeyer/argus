@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import click
@@ -18,11 +19,13 @@ def argus():
 
 @click.command()
 def find_new_listings() -> None:
-    _find_new_listings(
-        telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN")),
-        engine=engine,
-        discogs_api_client=DiscogsApiClient(),
-        discogs_web_client=DiscogsWebClient(),
+    asyncio.run(
+        _find_new_listings(
+            telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN")),
+            engine=engine,
+            discogs_api_client=DiscogsApiClient(),
+            discogs_web_client=DiscogsWebClient(),
+        )
     )
 
 

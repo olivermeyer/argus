@@ -1,6 +1,5 @@
 import asyncio
 import traceback
-from time import sleep
 
 from sqlalchemy.engine import Engine
 
@@ -92,26 +91,19 @@ async def _process_release(
     Listing.update(release_id, discogs_listings, engine=engine)
 
 
-def main(
+async def main(
     telegram: TelegramClient,
     engine: Engine,
     discogs_api_client: DiscogsApiClient,
     discogs_web_client: DiscogsWebClient,
 ):
     while True:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(
-                find_new_listings(
-                    telegram=telegram,
-                    engine=engine,
-                    discogs_api_client=discogs_api_client,
-                    discogs_web_client=discogs_web_client,
-                )
-            )
-        finally:
-            loop.close()
+        await find_new_listings(
+            telegram=telegram,
+            engine=engine,
+            discogs_api_client=discogs_api_client,
+            discogs_web_client=discogs_web_client,
+        )
         sleep_seconds = 60
         logger.info(f"Sleeping for {sleep_seconds} seconds")
-        sleep(sleep_seconds)
+        await asyncio.sleep(sleep_seconds)
