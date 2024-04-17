@@ -50,7 +50,7 @@ async def _process_releases(
                 release_id=release_id, engine=engine, client=client, telegram=telegram
             )
         )
-    for task in asyncio.as_completed(tasks, timeout=10):
+    for task in asyncio.as_completed(tasks, timeout=30):
         try:
             await task
         except Exception as e:
