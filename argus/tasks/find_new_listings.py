@@ -101,15 +101,17 @@ def main(
     while True:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        asyncio.run(
-            find_new_listings(
-                telegram=telegram,
-                engine=engine,
-                discogs_api_client=discogs_api_client,
-                discogs_web_client=discogs_web_client,
+        try:
+            loop.run_until_complete(
+                find_new_listings(
+                    telegram=telegram,
+                    engine=engine,
+                    discogs_api_client=discogs_api_client,
+                    discogs_web_client=discogs_web_client,
+                )
             )
-        )
-        loop.stop()
+        finally:
+            loop.close()
         sleep_seconds = 60
         logger.info(f"Sleeping for {sleep_seconds} seconds")
         sleep(sleep_seconds)
