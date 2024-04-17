@@ -22,6 +22,7 @@ def find_new_listings(
     discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
     discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
 ):
+    logger.info("START - find_new_listings")
     try:
         for user in User.fetch_all(engine=engine):
             WantlistItem.update(user, client=discogs_api_client, engine=engine)
@@ -35,6 +36,8 @@ def find_new_listings(
         message = f"Failed to find new listings: {e}"
         logger.error(message)
         notify_users(Error(text=message), engine=engine, telegram=telegram)
+    finally:
+        logger.info("END - find_new_listings")
 
 
 async def _process_releases(
@@ -53,7 +56,7 @@ async def _process_releases(
         try:
             await task
         except Exception as e:
-            message = f"Failed to process release: {str(e)}"
+            message = f"Failed to process release: {e}"
             logger.error(message)
             notify_users(Error(text=message), engine=engine, telegram=telegram)
 
