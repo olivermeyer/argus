@@ -44,16 +44,11 @@ async def _process_releases(
     client: DiscogsWebClient,
     telegram: TelegramClient,
 ) -> None:
-    tasks = []
     for release_id in WantlistItem.fetch_all_release_ids(engine=engine):
-        tasks.append(
-            _process_release(
+        try:
+            await _process_release(
                 release_id=release_id, engine=engine, client=client, telegram=telegram
             )
-        )
-    for task in asyncio.as_completed(tasks, timeout=120):
-        try:
-            await task
         except Exception:
             message = "Failed to process release"
             logger.error(f"{message}: {traceback.format_exc()}")
