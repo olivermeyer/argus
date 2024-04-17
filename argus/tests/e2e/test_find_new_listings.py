@@ -21,7 +21,7 @@ from argus.user import User
         ]
     ],
 )
-def test_find_new_listings_for_new_release_with_listings(
+async def test_find_new_listings_for_new_release_with_listings(
     mock_listings_on_discogs,
     mock_get_wantlist_item_ids,
     engine,
@@ -38,7 +38,7 @@ def test_find_new_listings_for_new_release_with_listings(
         )
         session.commit()
     # When
-    find_new_listings(
+    await find_new_listings(
         engine=engine,
         telegram=telegram,
     )
@@ -54,7 +54,7 @@ def test_find_new_listings_for_new_release_with_listings(
     "listings",
     [[]],
 )
-def test_find_new_listings_for_new_release_with_no_listings(
+async def test_find_new_listings_for_new_release_with_no_listings(
     mock_listings_on_discogs,
     mock_get_wantlist_item_ids,
     engine,
@@ -70,7 +70,7 @@ def test_find_new_listings_for_new_release_with_no_listings(
         )
         session.commit()
     # When
-    find_new_listings(
+    await find_new_listings(
         engine=engine,
         telegram=telegram,
     )
@@ -91,7 +91,7 @@ def test_find_new_listings_for_new_release_with_no_listings(
         ]
     ],
 )
-def test_find_new_listings_for_existing_release(
+async def test_find_new_listings_for_existing_release(
     mock_listings_on_discogs,
     mock_get_wantlist_item_ids,
     engine,
@@ -112,7 +112,7 @@ def test_find_new_listings_for_existing_release(
         session.add(listing_factory(release_id=100, listing_id=201))
         session.commit()
     # When
-    find_new_listings(
+    await find_new_listings(
         engine=engine,
         telegram=telegram,
     )
@@ -130,7 +130,7 @@ def test_find_new_listings_for_existing_release(
     [[]],
 )
 @patch("argus.discogs.models.listing.Listings.in_db")
-def test_find_new_listings_should_send_error_to_telegram_for_exception_in_process_release(
+async def test_find_new_listings_should_send_error_to_telegram_for_exception_in_process_release(
     mock_listings_on_db,
     mock_listings_on_discogs,
     mock_get_wantlist_item_ids,
@@ -155,7 +155,7 @@ def test_find_new_listings_should_send_error_to_telegram_for_exception_in_proces
         )
         session.commit()
     # When
-    find_new_listings(
+    await find_new_listings(
         engine=engine,
         telegram=telegram,
     )
@@ -173,7 +173,7 @@ def test_find_new_listings_should_send_error_to_telegram_for_exception_in_proces
     [[]],
 )
 @patch("argus.user.User.fetch_all")
-def test_find_new_listings_should_send_error_to_telegram_for_exception_in_find_new_listing(
+async def test_find_new_listings_should_send_error_to_telegram_for_exception_in_find_new_listing(
     mock_user_fetch_all,
     mock_listings_on_discogs,
     mock_get_wantlist_item_ids,
@@ -198,7 +198,7 @@ def test_find_new_listings_should_send_error_to_telegram_for_exception_in_find_n
         )
         session.commit()
     # When
-    find_new_listings(
+    await find_new_listings(
         engine=engine,
         telegram=telegram,
     )

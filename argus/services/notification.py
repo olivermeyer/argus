@@ -1,4 +1,3 @@
-import asyncio
 from typing import Union
 
 from sqlalchemy import Engine
@@ -15,21 +14,17 @@ from argus.user import User
 NotificationTypes = Union[Listing, Error]
 
 
-def _notify(message, user: User, telegram: TelegramClient) -> None:
-    try:
-        asyncio.get_running_loop()
-        telegram.send(message, user.telegram_chat_id)
-    except RuntimeError:
-        asyncio.run(telegram.send(message, user.telegram_chat_id))
+async def _notify(message, user: User, telegram: TelegramClient) -> None:
+    await telegram.send(message, user.telegram_chat_id)
 
 
-def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
+async def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about new listing {listing.listing_id}")
     message = NewListingMessage(listing).prepare()
-    _notify(message=message, user=user, telegram=telegram)
+    await _notify(message=message, user=user, telegram=telegram)
 
 
-def notify_users_for_new_listing(
+async def notify_users_for_new_listing(
     listing: Listing, engine: Engine, telegram: TelegramClient
 ):
     with Session(engine) as session:
@@ -46,28 +41,30 @@ def notify_users_for_new_listing(
             )
         ).all()
         for user in users:
-            notify_new_listing(user, listing, telegram)
+            await notify_new_listing(user, listing, telegram)
 
 
-def notify_new_error(user: User, error: Error, telegram: TelegramClient):
+async def notify_new_error(user: User, error: Error, telegram: TelegramClient):
     logger.debug(f"Notifying user {user.name} about {error.text}")
     message = ErrorMessage(error).prepare()
-    _notify(message=message, user=user, telegram=telegram)
+    await _notify(message=message, user=user, telegram=telegram)
 
 
-def notify_users_for_error(error: Error, engine: Engine, telegram: TelegramClient):
+async def notify_users_for_error(
+    error: Error, engine: Engine, telegram: TelegramClient
+):
     with Session(engine) as session:
         users = session.exec(select(User).where(User.warn_on_error)).all()
         for user in users:
-            notify_new_error(user, error, telegram)
+            await notify_new_error(user, error, telegram)
 
 
-def notify_users(
+async def notify_users(
     notification: NotificationTypes, engine: Engine, telegram: TelegramClient
 ):
     if isinstance(notification, Listing):
-        notify_users_for_new_listing(notification, engine, telegram)
+        await notify_users_for_new_listing(notification, engine, telegram)
     elif isinstance(notification, Error):
-        notify_users_for_error(notification, engine, telegram)
+        await notify_users_for_error(notification, engine, telegram)
     else:
         raise ValueError(f"Unexpected notification type: {type(notification)}")
