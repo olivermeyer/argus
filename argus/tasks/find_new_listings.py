@@ -99,6 +99,8 @@ def main(
     discogs_web_client: DiscogsWebClient,
 ):
     while True:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         asyncio.run(
             find_new_listings(
                 telegram=telegram,
@@ -107,6 +109,7 @@ def main(
                 discogs_web_client=discogs_web_client,
             )
         )
+        loop.close()
         sleep_seconds = 60
         logger.info(f"Sleeping for {sleep_seconds} seconds")
         sleep(sleep_seconds)
