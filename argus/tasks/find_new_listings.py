@@ -109,7 +109,7 @@ def main(
                 discogs_web_client=discogs_web_client,
             )
         )
-        loop.close()
+        loop.stop()
         sleep_seconds = 60
         logger.info(f"Sleeping for {sleep_seconds} seconds")
         sleep(sleep_seconds)
