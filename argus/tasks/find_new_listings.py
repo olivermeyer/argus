@@ -24,8 +24,7 @@ async def find_new_listings(
 ):
     logger.info("START - find_new_listings")
     try:
-        for user in User.fetch_all(engine=engine):
-            WantlistItem.update(user, client=discogs_api_client, engine=engine)
+        await _update_wantlists(engine=engine, client=discogs_api_client, telegram=telegram)
         await _process_releases(
             engine=engine, client=discogs_web_client, telegram=telegram
         )
@@ -36,6 +35,16 @@ async def find_new_listings(
         await notify_users(Error(text=message), engine=engine, telegram=telegram)
     finally:
         logger.info("END - find_new_listings")
+
+
+async def _update_wantlists(engine: Engine, client: DiscogsApiClient, telegram: TelegramClient) -> None:
+    try:
+        for user in User.fetch_all(engine=engine):
+            WantlistItem.update(user, client=client, engine=engine)
+    except Exception:
+        message = "Failed to update wantlists"
+        logger.error(f"{message}: {traceback.format_exc()}")
+        await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
 async def _process_releases(
