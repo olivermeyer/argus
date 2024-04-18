@@ -15,3 +15,6 @@ stop-dev:  ## Stops all containers
 
 stop-prod:  ## Stops all containers
 	docker-compose -f docker-compose.prod.yaml down
+
+test:
+	ENVIRONMENT=test poetry run pytest

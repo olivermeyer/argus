@@ -1,3 +1,5 @@
+import traceback
+
 from sqlalchemy import Engine
 from sqlmodel import Field, Session, SQLModel, select
 
@@ -15,7 +17,12 @@ class WantlistItem(SQLModel, table=True):
     def update(user: User, client: DiscogsApiClient, engine: Engine) -> None:
         """Updates the wantlist."""
         try:
-            logger.info(f"Updating wantlist for user {user.name}")
+            logger.info(
+                "Updating wantlist for user",
+                extra={
+                    "user": user.name,
+                },
+            )
             with Session(engine) as session:
                 for result in session.exec(
                     select(WantlistItem).where(WantlistItem.user_id == user.id)
@@ -26,8 +33,14 @@ class WantlistItem(SQLModel, table=True):
                 ):
                     session.add(WantlistItem(user_id=user.id, release_id=release_id))
                 session.commit()
-        except Exception as e:
-            logger.error(f"Failed to update wantlist for user {user.name}: {e}")
+        except Exception:
+            logger.exception(
+                "Failed to update wantlist",
+                extra={
+                    "user": user.name,
+                    "traceback": traceback.format_exc(),
+                },
+            )
             raise
 
     @staticmethod
@@ -37,8 +50,11 @@ class WantlistItem(SQLModel, table=True):
             logger.info("Fetching all release IDs in the WantlistItem table")
             with Session(engine) as session:
                 return set(session.exec(select(WantlistItem.release_id)).all())
-        except Exception as e:
-            logger.error(
-                f"Failed to fetch all release IDs in the WantlistItem table: {e}"
+        except Exception:
+            logger.exception(
+                "Failed to fetch all release IDs in the WantlistItem table",
+                extra={
+                    "traceback": traceback.format_exc(),
+                },
             )
             raise

@@ -19,7 +19,13 @@ async def _notify(message, user: User, telegram: TelegramClient) -> None:
 
 
 async def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
-    logger.debug(f"Notifying user {user.name} about new listing {listing.listing_id}")
+    logger.debug(
+        "Notifying user about new listing",
+        extra={
+            "user": user.name,
+            "listing_id": listing.listing_id,
+        },
+    )
     message = NewListingMessage(listing).prepare()
     await _notify(message=message, user=user, telegram=telegram)
 
@@ -28,7 +34,12 @@ async def notify_users_for_new_listing(
     listing: Listing, engine: Engine, telegram: TelegramClient
 ):
     with Session(engine) as session:
-        logger.debug(f"Finding users to notify about new listing {listing.listing_id}")
+        logger.debug(
+            "Finding users to notify about new listing",
+            extra={
+                "listing": listing.listing_id,
+            },
+        )
         users = session.exec(
             select(User).where(
                 col(User.id).in_(
@@ -45,7 +56,13 @@ async def notify_users_for_new_listing(
 
 
 async def notify_new_error(user: User, error: Error, telegram: TelegramClient):
-    logger.debug(f"Notifying user {user.name} about {error.text}")
+    logger.debug(
+        "Notifying user about error",
+        extra={
+            "user": user.name,
+            "error": error.text,
+        },
+    )
     message = ErrorMessage(error).prepare()
     await _notify(message=message, user=user, telegram=telegram)
 
@@ -67,4 +84,6 @@ async def notify_users(
     elif isinstance(notification, Error):
         await notify_users_for_error(notification, engine, telegram)
     else:
-        raise ValueError(f"Unexpected notification type: {type(notification)}")
+        message = f"Unexpected notification type: {type(notification)}"
+        logger.exception(message)
+        raise ValueError(message)

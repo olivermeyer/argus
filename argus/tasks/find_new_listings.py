@@ -1,5 +1,5 @@
 import asyncio
-import traceback
+from uuid import uuid4
 
 from sqlalchemy.engine import Engine
 
@@ -22,6 +22,8 @@ async def find_new_listings(
     discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
     discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
 ):
+    logger.clear_labels()
+    logger.add_labels(process_id=str(uuid4()))
     logger.info("START - find_new_listings")
     try:
         await _update_wantlists(
@@ -33,7 +35,7 @@ async def find_new_listings(
         Listing.clean(engine=engine)
     except Exception:
         message = "Failed to find new listings"
-        logger.error(f"{message}: {traceback.format_exc()}")
+        logger.exception(message)
         await notify_users(Error(text=message), engine=engine, telegram=telegram)
     finally:
         logger.info("END - find_new_listings")
@@ -47,7 +49,7 @@ async def _update_wantlists(
             WantlistItem.update(user, client=client, engine=engine)
     except Exception:
         message = "Failed to update wantlists"
-        logger.error(f"{message}: {traceback.format_exc()}")
+        logger.exception(message)
         await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
@@ -63,7 +65,7 @@ async def _process_releases(
             )
         except Exception:
             message = "Failed to process release"
-            logger.error(f"{message}: {traceback.format_exc()}")
+            logger.exception(message)
             await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
@@ -80,12 +82,20 @@ async def _process_release(
             listing for listing in discogs_listings if listing not in db_listings
         ]:
             logger.debug(
-                f"Found {len(new_listings)} new listings for release {release_id}"
+                f"Found {len(new_listings)} new listings for release",
+                extra={
+                    "release_id": release_id,
+                },
             )
             for listing in new_listings:
                 await notify_users(listing, engine=engine, telegram=telegram)
         else:
-            logger.debug(f"No new listings for release {release_id}")
+            logger.debug(
+                "No new listings for release",
+                extra={
+                    "release_id": release_id,
+                },
+            )
     if not discogs_listings:
         discogs_listings = [
             Listing(
