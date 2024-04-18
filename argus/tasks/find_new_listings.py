@@ -24,7 +24,9 @@ async def find_new_listings(
 ):
     logger.info("START - find_new_listings")
     try:
-        await _update_wantlists(engine=engine, client=discogs_api_client, telegram=telegram)
+        await _update_wantlists(
+            engine=engine, client=discogs_api_client, telegram=telegram
+        )
         await _process_releases(
             engine=engine, client=discogs_web_client, telegram=telegram
         )
@@ -37,7 +39,9 @@ async def find_new_listings(
         logger.info("END - find_new_listings")
 
 
-async def _update_wantlists(engine: Engine, client: DiscogsApiClient, telegram: TelegramClient) -> None:
+async def _update_wantlists(
+    engine: Engine, client: DiscogsApiClient, telegram: TelegramClient
+) -> None:
     try:
         for user in User.fetch_all(engine=engine):
             WantlistItem.update(user, client=client, engine=engine)
@@ -75,13 +79,13 @@ async def _process_release(
         if new_listings := [
             listing for listing in discogs_listings if listing not in db_listings
         ]:
-            logger.info(
+            logger.debug(
                 f"Found {len(new_listings)} new listings for release {release_id}"
             )
             for listing in new_listings:
                 await notify_users(listing, engine=engine, telegram=telegram)
         else:
-            logger.info(f"No new listings for release {release_id}")
+            logger.debug(f"No new listings for release {release_id}")
     if not discogs_listings:
         discogs_listings = [
             Listing(
