@@ -1,4 +1,5 @@
 import asyncio
+from uuid import uuid4
 
 from sqlalchemy.engine import Engine
 
@@ -21,6 +22,8 @@ async def find_new_listings(
     discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
     discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
 ):
+    logger.clear_labels()
+    logger.add_labels(process_id=str(uuid4()))
     logger.info("START - find_new_listings")
     try:
         await _update_wantlists(
