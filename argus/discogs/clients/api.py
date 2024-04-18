@@ -17,8 +17,8 @@ class DiscogsApiClient:
             )
             response.raise_for_status()
             return response.json()
-        except Exception as e:
-            logger.error(f"Failed to GET {self.base_url}{endpoint}: {e}")
+        except Exception:
+            logger.exception(f"Failed to GET {self.base_url}{endpoint}")
             raise
 
     def get_username(self, token: str) -> str:

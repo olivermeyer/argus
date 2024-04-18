@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import traceback
 
 import requests
 
@@ -9,15 +10,17 @@ import requests
 class Logger(logging.Logger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
-
         self.loki_url = kwargs.get("loki_url", None)
-        self.labels = kwargs.get("labels", {})
 
-    def log_to_loki(self, msg, level: str):
+    def log_to_loki(self, msg, level: str, extra: dict | None = None):
+        labels = {
+            "application": "argus",
+        }
+        labels = {**labels, **extra} if extra else labels
         payload = {
             "streams": [
                 {
-                    "stream": {"application": "argus"},
+                    "stream": labels,
                     "values": [[str(time.time_ns()), f"[{level}] {msg}"]],
                 }
             ]
@@ -28,32 +31,28 @@ class Logger(logging.Logger):
         response.raise_for_status()
         return response
 
-    def get_labels_string(self, labels_map):
-        labels_string = "{"
-        for key, value in labels_map.items():
-            labels_string += f'{key}="{value}", '
-        # Remove the trailing comma and space
-        labels_string = labels_string.rstrip(", ")
-        labels_string += "}"
-        return labels_string
-
-    def info(self, msg, *args, **kwargs):
-        self.log_to_loki(msg, "INFO")
+    def info(self, msg, *args, extra: dict | None = None, **kwargs):
+        self.log_to_loki(msg, "INFO", extra=extra)
         super().info(msg, *args, **kwargs)
 
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg, *args, extra: dict | None = None, **kwargs):
         # self.log_to_loki(msg, "DEBUG")
         super().debug(msg, *args, **kwargs)
 
-    def warning(self, msg, *args, **kwargs):
+    def warning(self, msg, *args, extra: dict | None = None, **kwargs):
         self.log_to_loki(msg, "WARNING")
         super().warning(msg, *args, **kwargs)
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg, *args, extra: dict | None = None, **kwargs):
         self.log_to_loki(msg, "ERROR")
         super().error(msg, *args, **kwargs)
 
-    def critical(self, msg, *args, **kwargs):
+    def exception(self, msg, *args, extra: dict | None = None, **kwargs):
+        extra = {**extra, **{"traceback": traceback.format_exc()}}
+        self.log_to_loki(msg, "ERROR", extra=extra)
+        super().exception(msg, *args, **kwargs)
+
+    def critical(self, msg, *args, extra: dict | None = None, **kwargs):
         self.log_to_loki(msg, "CRITICAL")
         super().critical(msg, *args, **kwargs)
 
@@ -62,10 +61,10 @@ def get_logger() -> logging.Logger:
     """
     Configures and returns a logger.
     """
-    if os.environ.get("ENVIRONMENT") == "pro":
-        logger = Logger(__name__, loki_url="http://loki:3100/loki/api/v1/push")
-    else:
+    if os.environ.get("ENVIRONMENT") == "test":
         logger = logging.Logger(__name__)
+    else:
+        logger = Logger(__name__, loki_url="http://loki:3100/loki/api/v1/push")
     logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
     stream_handler = logging.StreamHandler()
     logger.addHandler(stream_handler)

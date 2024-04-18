@@ -76,17 +76,32 @@ class Listing(SQLModel, table=True):
 
     @staticmethod
     def _derive_condition(text: str) -> Condition:
-        logger.debug("Trying to derive condition from text")
+        logger.debug(
+            "Trying to derive condition from text",
+            extra={
+                "text": text,
+            },
+        )
         for condition in Condition:
             if condition.value.full in text:
-                logger.debug(f"Found condition: {condition}")
+                logger.debug(
+                    f"Found condition: {condition}",
+                    extra={
+                        "text": text,
+                    },
+                )
                 return condition
         raise ValueError(f"Couldn't derive a condition from text: {text}")
 
     @staticmethod
     def update(release_id: int, listings: list["Listing"], engine: Engine) -> None:
         try:
-            logger.info(f"Updating listings for release {release_id} in the database")
+            logger.info(
+                "Updating listings for release in the database",
+                extra={
+                    "release_id": release_id,
+                },
+            )
             with Session(engine) as session:
                 for result in session.exec(
                     select(Listing).where(Listing.release_id == release_id)
@@ -95,8 +110,11 @@ class Listing(SQLModel, table=True):
                 for listing in listings:
                     session.add(listing)
                 session.commit()
-        except Exception as e:
-            logger.error(f"Failed to update listings for release {release_id}: {e}")
+        except Exception:
+            logger.exception(
+                "Failed to update listings for release",
+                extra={"release_id": release_id},
+            )
             raise
 
     @staticmethod
@@ -137,7 +155,12 @@ class Listings:
 
     @staticmethod
     async def in_db(release_id: int, engine: Engine) -> Sequence[Listing]:
-        logger.info(f"Fetching listings for release {release_id} from the database")
+        logger.info(
+            "Fetching listings for release from the database",
+            extra={
+                "release_id": release_id,
+            },
+        )
         with Session(engine) as session:
             return session.exec(
                 select(Listing).where(Listing.release_id == release_id)

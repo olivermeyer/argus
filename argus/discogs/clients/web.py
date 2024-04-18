@@ -15,6 +15,6 @@ class DiscogsWebClient:
                 response = await session.get(url=url, impersonate="chrome110")
                 response.raise_for_status()
             return response.text
-        except Exception as e:
-            logger.error(f"Failed to GET {url}: {e}")
+        except Exception:
+            logger.exception(f"Failed to GET {url}")
             raise

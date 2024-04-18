@@ -20,6 +20,6 @@ class User(SQLModel, table=True):
             with Session(engine) as session:
                 return session.exec(select(User)).all()
 
-        except Exception as e:
-            logger.error(f"Error fetching all users: {e}")
+        except Exception:
+            logger.exception("Error fetching all users")
             raise
