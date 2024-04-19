@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import traceback
+from typing import Any
 
 import requests
 
@@ -17,13 +18,22 @@ class Logger(logging.Logger):
         self.loki_url = kwargs.get("loki_url", None)
         self.labels = Logger.DEFAULT_LABELS
 
+    def _stringify_values(self, data: dict[str, Any]) -> dict[str, str]:
+        return {key: str(value) for key, value in data.items()}
+
     def log_to_loki(self, msg, level: str, extra: dict | None = None):
-        labels = {**self.labels, **extra} if extra else self.labels
+        extra = {**self.labels, **extra} if extra else self.labels
         payload = {
             "streams": [
                 {
-                    "stream": labels,
-                    "values": [[str(time.time_ns()), f"[{level}] {msg}"]],
+                    "stream": Logger.DEFAULT_LABELS,
+                    "values": [
+                        [
+                            str(time.time_ns()),
+                            f"[{level}] {msg}",
+                            self._stringify_values(extra),
+                        ]
+                    ],
                 }
             ]
         }
@@ -40,17 +50,17 @@ class Logger(logging.Logger):
     def debug(self, msg, *args, extra: dict | None = None, **kwargs):
         # if self.loki_url:
         #   self.log_to_loki(msg, "DEBUG")
-        super().debug(msg, *args, **kwargs)
+        super().debug(msg, *args, **kwargs, extra=extra)
 
     def warning(self, msg, *args, extra: dict | None = None, **kwargs):
         if self.loki_url:
             self.log_to_loki(msg, "WARNING")
-        super().warning(msg, *args, **kwargs)
+        super().warning(msg, *args, **kwargs, extra=extra)
 
     def error(self, msg, *args, extra: dict | None = None, **kwargs):
         if self.loki_url:
             self.log_to_loki(msg, "ERROR")
-        super().error(msg, *args, **kwargs)
+        super().error(msg, *args, **kwargs, extra=extra)
 
     def exception(self, msg, *args, extra: dict | None = None, **kwargs):
         extra = (
