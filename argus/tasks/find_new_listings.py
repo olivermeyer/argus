@@ -127,6 +127,6 @@ async def main(
             discogs_api_client=discogs_api_client,
             discogs_web_client=discogs_web_client,
         )
-        sleep_seconds = 60
+        sleep_seconds = 0
         logger.info(f"Sleeping for {sleep_seconds} seconds")
         await asyncio.sleep(sleep_seconds)
