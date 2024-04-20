@@ -18,7 +18,7 @@ class WantlistItem(SQLModel, table=True):
         """Updates the wantlist."""
         try:
             logger.info(
-                "Updating wantlist for user",
+                "Updating wantlist for user in database",
                 extra={
                     "user": user.name,
                 },
@@ -47,7 +47,7 @@ class WantlistItem(SQLModel, table=True):
     def fetch_all_release_ids(engine: Engine) -> set[int]:
         """Fetches all release IDs in the wantlist."""
         try:
-            logger.info("Fetching all release IDs in the WantlistItem table")
+            logger.info("Fetching all release IDs in wantlists in database")
             with Session(engine) as session:
                 return set(session.exec(select(WantlistItem.release_id)).all())
         except Exception:

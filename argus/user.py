@@ -15,7 +15,7 @@ class User(SQLModel, table=True):
 
     @staticmethod
     def fetch_all(engine: Engine) -> Sequence["User"]:
-        logger.info("Fetching all users")
+        logger.info("Fetching all users in database")
         try:
             with Session(engine) as session:
                 return session.exec(select(User)).all()
