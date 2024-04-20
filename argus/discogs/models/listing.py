@@ -97,7 +97,7 @@ class Listing(SQLModel, table=True):
     def update(release_id: int, listings: list["Listing"], engine: Engine) -> None:
         try:
             logger.info(
-                "Updating listings for release in the database",
+                "Updating listings for release in database",
                 extra={
                     "release_id": release_id,
                 },
@@ -156,7 +156,7 @@ class Listings:
     @staticmethod
     async def in_db(release_id: int, engine: Engine) -> Sequence[Listing]:
         logger.info(
-            "Fetching listings for release from the database",
+            "Fetching listings for release from database",
             extra={
                 "release_id": release_id,
             },
