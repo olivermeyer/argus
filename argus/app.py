@@ -39,9 +39,6 @@ argus.add_command(find_new_listings)
     "--telegram_chat_id", required=True, help="Telegram chat ID for the user."
 )
 @click.option(
-    "--telegram_chat_id", required=True, help="Telegram chat ID for the user."
-)
-@click.option(
     "--warn_on_error", default=False, help="Whether to warn the user in case of errors."
 )
 def add_user(
