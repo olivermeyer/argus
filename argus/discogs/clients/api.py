@@ -26,7 +26,7 @@ class DiscogsApiClient:
 
     def get_wantlist_item_ids(self, token: str) -> list[int]:
         username = self.get_username(token)
-        wantlist_items = self._get(f"/users/{username}/wants?per_page=100", token)[
+        wantlist_items = self._get(f"/users/{username}/wants?per_page=50", token)[
             "wants"
         ]
         return [int(item["id"]) for item in wantlist_items]
