@@ -14,25 +14,10 @@ from argus.user import User
 NotificationTypes = Union[Listing, Error]
 
 
-async def _notify(message, user: User, telegram: TelegramClient) -> None:
-    await telegram.send(message, user.telegram_chat_id)
-
-
-async def notify_new_listing(user: User, listing: Listing, telegram: TelegramClient):
-    logger.debug(
-        "Notifying user about new listing",
-        extra={
-            "user": user.name,
-            "listing_id": listing.listing_id,
-        },
-    )
-    message = NewListingMessage(listing).prepare()
-    await _notify(message=message, user=user, telegram=telegram)
-
-
 async def notify_users_for_new_listing(
     listing: Listing, engine: Engine, telegram: TelegramClient
 ):
+    message = NewListingMessage(listing).prepare()
     with Session(engine) as session:
         logger.debug(
             "Finding users to notify about new listing",
@@ -52,28 +37,17 @@ async def notify_users_for_new_listing(
             )
         ).all()
         for user in users:
-            await notify_new_listing(user, listing, telegram)
-
-
-async def notify_new_error(user: User, error: Error, telegram: TelegramClient):
-    logger.debug(
-        "Notifying user about error",
-        extra={
-            "user": user.name,
-            "error": error.text,
-        },
-    )
-    message = ErrorMessage(error).prepare()
-    await _notify(message=message, user=user, telegram=telegram)
+            await telegram.send(message, user.telegram_chat_id)
 
 
 async def notify_users_for_error(
     error: Error, engine: Engine, telegram: TelegramClient
 ):
+    message = ErrorMessage(error).prepare()
     with Session(engine) as session:
         users = session.exec(select(User).where(User.warn_on_error)).all()
         for user in users:
-            await notify_new_error(user, error, telegram)
+            await telegram.send(message, user.telegram_chat_id)
 
 
 async def notify_users(
