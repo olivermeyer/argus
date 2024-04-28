@@ -83,9 +83,11 @@ class Logger(logging.Logger):
             **self.labels,
             **kwargs,
         }
+        return self
 
     def clear_labels(self):
         self.labels = Logger.DEFAULT_LABELS
+        return self
 
 
 def get_logger() -> logging.Logger:
