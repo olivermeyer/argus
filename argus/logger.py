@@ -63,14 +63,15 @@ class Logger(logging.Logger):
         super().error(msg, *args, **kwargs, extra=extra)
 
     def exception(self, msg, *args, extra: dict | None = None, **kwargs):
-        extra = (
-            {**extra, **{"traceback": traceback.format_exc()}}
-            if extra
-            else {"traceback": traceback.format_exc()}
+        extra = extra if extra else {}
+        self.error(
+            msg,
+            "ERROR",
+            extra={
+                **extra,
+                **{"traceback": traceback.format_exc()},
+            },
         )
-        if self.loki_url:
-            self.log_to_loki(msg, "ERROR", extra=extra)
-        super().exception(msg, *args, **kwargs)
 
     def critical(self, msg, *args, extra: dict | None = None, **kwargs):
         if self.loki_url:
