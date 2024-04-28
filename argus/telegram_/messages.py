@@ -42,7 +42,7 @@ class NewListingMessage:
     text: str = ""
 
     def prepare(self):
-        first_line = f"[v2] {self.listing.title}"
+        first_line = self.listing.title
         second_line = "{mc} / {sc} | {p} | {sf}".format(
             mc=self.listing.media_condition.value.short,
             sc=self.listing.sleeve_condition.value.short,
@@ -60,5 +60,5 @@ class ErrorMessage:
     text: str = ""
 
     def prepare(self):
-        self.text = clean(f"\\[v2\\] {self.error.text}")
+        self.text = clean(self.error.text)
         return self
