@@ -9,7 +9,7 @@ from argus.discogs.clients.api import DiscogsApiClient
 from argus.discogs.clients.web import DiscogsWebClient
 from argus.tasks.add_user import main as _add_user
 from argus.tasks.find_new_listings import main as _find_new_listings
-from argus.telegram_.client import TelegramClient
+from argus.telegram.client import Telegram
 
 
 @click.group()
@@ -21,7 +21,7 @@ def argus():
 def find_new_listings() -> None:
     asyncio.run(
         _find_new_listings(
-            telegram=TelegramClient(os.environ.get("TELEGRAM_TOKEN")),
+            telegram=Telegram(os.environ.get("TELEGRAM_TOKEN")),
             engine=engine,
             discogs_api_client=DiscogsApiClient(),
             discogs_web_client=DiscogsWebClient(),

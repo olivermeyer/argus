@@ -1,18 +1,18 @@
 from typing import Union
 
-import telegram
+import telegram as _telegram
 from telegram.request import HTTPXRequest
 
 from argus.logger import logger
-from argus.telegram_.messages import ErrorMessage, NewListingMessage
+from argus.telegram.messages import ErrorMessage, NewListingMessage
 
 Message = Union[NewListingMessage, ErrorMessage]
 
 
-class TelegramClient:
+class Telegram:
     def __init__(self, token: str):
         self.token = token
-        self.bot = telegram.Bot(
+        self.bot = _telegram.Bot(
             token=self.token, request=HTTPXRequest(connection_pool_size=20)
         )
         self.logger = logger
