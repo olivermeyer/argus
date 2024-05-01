@@ -11,7 +11,7 @@ from argus.telegram_.client import TelegramClient
 from argus.telegram_.messages import ErrorMessage, NewListingMessage
 from argus.user import User
 
-NotificationTypes = Union[Listing, Error]
+Notification = Union[Listing, Error]
 
 
 async def notify_users_for_new_listing(
@@ -51,7 +51,7 @@ async def notify_users_for_error(
 
 
 async def notify_users(
-    notification: NotificationTypes, engine: Engine, telegram: TelegramClient
+    notification: Notification, engine: Engine, telegram: TelegramClient
 ):
     if isinstance(notification, Listing):
         await notify_users_for_new_listing(notification, engine, telegram)
