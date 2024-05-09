@@ -12,12 +12,12 @@ from argus.discogs.models.wantlist import WantlistItem
 from argus.error import Error
 from argus.logger import logger
 from argus.services.notification import notify_users
-from argus.telegram.client import Telegram
+from argus.telegram_.client import TelegramClient
 from argus.user import User
 
 
 async def find_new_listings(
-    telegram: Telegram,
+    telegram: TelegramClient,
     engine: Engine = _engine,
     discogs_api_client: DiscogsApiClient = DiscogsApiClient(),
     discogs_web_client: DiscogsWebClient = DiscogsWebClient(),
@@ -41,7 +41,7 @@ async def find_new_listings(
 
 
 async def _update_wantlists(
-    engine: Engine, client: DiscogsApiClient, telegram: Telegram
+    engine: Engine, client: DiscogsApiClient, telegram: TelegramClient
 ) -> None:
     try:
         for user in User.fetch_all(engine=engine):
@@ -55,7 +55,7 @@ async def _update_wantlists(
 async def _process_releases(
     engine: Engine,
     client: DiscogsWebClient,
-    telegram: Telegram,
+    telegram: TelegramClient,
 ) -> None:
     for release_id in WantlistItem.fetch_all_release_ids(engine=engine):
         try:
@@ -72,7 +72,7 @@ async def _process_release(
     release_id: int,
     engine: Engine,
     client: DiscogsWebClient,
-    telegram: Telegram,
+    telegram: TelegramClient,
 ) -> None:
     discogs_listings = await Listings.on_discogs(release_id, client=client)
     db_listings = await Listings.in_db(release_id, engine=engine)
@@ -114,7 +114,7 @@ async def _process_release(
 
 
 async def main(
-    telegram: Telegram,
+    telegram: TelegramClient,
     engine: Engine,
     discogs_api_client: DiscogsApiClient,
     discogs_web_client: DiscogsWebClient,

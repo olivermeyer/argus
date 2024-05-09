@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 from argus.discogs.models.listing import Listing
 from argus.discogs.models.wantlist import WantlistItem
 from argus.tasks.find_new_listings import find_new_listings
-from argus.telegram.messages import ErrorMessage, NewListingMessage
+from argus.telegram_.messages import ErrorMessage, NewListingMessage
 from argus.tests.conftest import listing_factory
 from argus.user import User
 

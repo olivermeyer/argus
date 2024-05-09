@@ -7,15 +7,15 @@ from argus.discogs.models.listing import Listing
 from argus.discogs.models.wantlist import WantlistItem
 from argus.error import Error
 from argus.logger import logger
-from argus.telegram.client import Telegram
-from argus.telegram.messages import ErrorMessage, NewListingMessage
+from argus.telegram_.client import TelegramClient
+from argus.telegram_.messages import ErrorMessage, NewListingMessage
 from argus.user import User
 
 Notification = Union[Listing, Error]
 
 
 async def notify_users_for_new_listing(
-    listing: Listing, engine: Engine, telegram: Telegram
+    listing: Listing, engine: Engine, telegram: TelegramClient
 ):
     message = NewListingMessage(listing).prepare()
     with Session(engine) as session:
@@ -40,7 +40,9 @@ async def notify_users_for_new_listing(
             await telegram.send(message, user.telegram_chat_id)
 
 
-async def notify_users_for_error(error: Error, engine: Engine, telegram: Telegram):
+async def notify_users_for_error(
+    error: Error, engine: Engine, telegram: TelegramClient
+):
     message = ErrorMessage(error).prepare()
     with Session(engine) as session:
         users = session.exec(select(User).where(User.warn_on_error)).all()
@@ -48,7 +50,9 @@ async def notify_users_for_error(error: Error, engine: Engine, telegram: Telegra
             await telegram.send(message, user.telegram_chat_id)
 
 
-async def notify_users(notification: Notification, engine: Engine, telegram: Telegram):
+async def notify_users(
+    notification: Notification, engine: Engine, telegram: TelegramClient
+):
     if isinstance(notification, Listing):
         await notify_users_for_new_listing(notification, engine, telegram)
     elif isinstance(notification, Error):
