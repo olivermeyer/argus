@@ -25,10 +25,10 @@ async def find_new_listings(
     logger.clear_labels().add_labels(process_id=str(uuid4()))
     logger.info("START - find_new_listings")
     try:
-        await _update_wantlists(
+        await update_wantlists(
             engine=engine, client=discogs_api_client, telegram=telegram
         )
-        await _process_releases(
+        await process_releases(
             engine=engine, client=discogs_web_client, telegram=telegram
         )
         Listing.clean(engine=engine)
@@ -40,7 +40,7 @@ async def find_new_listings(
         logger.info("END - find_new_listings")
 
 
-async def _update_wantlists(
+async def update_wantlists(
     engine: Engine, client: DiscogsApiClient, telegram: TelegramClient
 ) -> None:
     try:
@@ -52,14 +52,14 @@ async def _update_wantlists(
         await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
-async def _process_releases(
+async def process_releases(
     engine: Engine,
     client: DiscogsWebClient,
     telegram: TelegramClient,
 ) -> None:
     for release_id in WantlistItem.fetch_all_release_ids(engine=engine):
         try:
-            await _process_release(
+            await process_release(
                 release_id=release_id, engine=engine, client=client, telegram=telegram
             )
         except Exception:
@@ -68,7 +68,7 @@ async def _process_releases(
             await notify_users(Error(text=message), engine=engine, telegram=telegram)
 
 
-async def _process_release(
+async def process_release(
     release_id: int,
     engine: Engine,
     client: DiscogsWebClient,

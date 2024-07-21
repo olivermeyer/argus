@@ -1,4 +1,5 @@
 from curl_cffi.requests import AsyncSession
+from retry import retry
 
 from argus.logger import logger
 
@@ -8,6 +9,7 @@ class DiscogsWebClient:
         url = f"https://discogs.com/sell/release/{release_id}?sort=listed%2Cdesc&limit=250"
         return await self._get(url)
 
+    @retry(tries=3, delay=1, backoff=1, logger=logger)
     async def _get(self, url: str) -> str:
         try:
             logger.info(f"GET {url}")
