@@ -59,7 +59,7 @@ class Logger(logging.Logger):
 
     def error(self, msg, *args, extra: dict | None = None, **kwargs):
         if self.loki_url:
-            self.log_to_loki(msg, "ERROR")
+            self.log_to_loki(msg, "ERROR", extra=extra)
         super().error(msg, *args, **kwargs, extra=extra)
 
     def exception(self, msg, *args, extra: dict | None = None, **kwargs):
