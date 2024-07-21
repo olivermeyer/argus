@@ -1,5 +1,5 @@
 import requests
-from retry import retry
+from retry_async import retry
 
 from argus.logger import logger
 

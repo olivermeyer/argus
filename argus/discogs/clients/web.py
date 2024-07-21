@@ -1,5 +1,6 @@
+from curl_cffi import CurlHttpVersion
 from curl_cffi.requests import AsyncSession
-from retry import retry
+from retry_async import retry
 
 from argus.logger import logger
 
@@ -13,7 +14,7 @@ class DiscogsWebClient:
     async def _get(self, url: str) -> str:
         try:
             logger.info(f"GET {url}")
-            async with AsyncSession() as session:
+            async with AsyncSession(http_version=CurlHttpVersion.V1_1) as session:
                 response = await session.get(url=url, impersonate="chrome110")
                 response.raise_for_status()
             return response.text
