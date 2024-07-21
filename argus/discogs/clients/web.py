@@ -1,6 +1,5 @@
 from curl_cffi import CurlHttpVersion
 from curl_cffi.requests import AsyncSession
-from retry_async import retry
 
 from argus.logger import logger
 
@@ -10,7 +9,8 @@ class DiscogsWebClient:
         url = f"https://discogs.com/sell/release/{release_id}?sort=listed%2Cdesc&limit=250"
         return await self._get(url)
 
-    @retry(tries=3, delay=1, backoff=1, logger=logger, is_async=True)
+    # Retries seem to cause a lot of 403 errors, disabling them to confirm
+    # @retry(tries=3, delay=1, backoff=1, logger=logger, is_async=True)
     async def _get(self, url: str) -> str:
         try:
             logger.info(f"GET {url}")
