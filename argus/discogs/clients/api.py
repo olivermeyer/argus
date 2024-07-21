@@ -7,7 +7,7 @@ from argus.logger import logger
 class DiscogsApiClient:
     base_url: str = "https://api.discogs.com"
 
-    @retry(tries=3, delay=1, backoff=1, logger=logger)
+    @retry(tries=3, delay=1, backoff=1, logger=logger, is_async=True)
     def _get(self, endpoint: str, token: str) -> dict:
         try:
             logger.info(f"GET {self.base_url}{endpoint}")
