@@ -19,5 +19,5 @@ class DiscogsWebClient:
                 response.raise_for_status()
             return response.text
         except Exception:
-            logger.exception(f"Failed to GET {url}")
+            logger.exception(f"Failed to GET {url}", response=response.text)
             raise
