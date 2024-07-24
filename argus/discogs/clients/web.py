@@ -1,4 +1,3 @@
-from curl_cffi import CurlHttpVersion
 from curl_cffi.requests import AsyncSession
 from retry_async import retry
 
