@@ -10,7 +10,7 @@ class DiscogsWebClient:
         url = f"https://discogs.com/sell/release/{release_id}?sort=listed%2Cdesc&limit=250"
         return await self._get(url)
 
-    @retry(tries=3, delay=1, backoff=2, logger=logger, is_async=True)
+    @retry(tries=3, delay=5, backoff=2, logger=logger, is_async=True)
     async def _get(self, url: str) -> str:
         try:
             logger.info(f"GET {url}")
