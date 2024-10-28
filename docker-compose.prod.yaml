@@ -9,6 +9,11 @@ services:
       - .env
     environment:
       - DB_LOCATION=/var/argus/argus.db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   loki:
     image: grafana/loki:3.0.0
