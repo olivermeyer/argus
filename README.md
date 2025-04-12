@@ -1,4 +1,8 @@
 # Argus
+
+# UPDATE: Argus is retired
+The wonderful folk at [discdogs](https://www.discdogs.app/) have put out a great replacement for Argus; I've therefore retired Argus and am making this repo public for anyone interested to use.
+
 ## Who is Argus?
 Argus is any Discogs user's best friend: he loves watching over his friends' wantlists, pinging them whenever a
 release in their wantlist has a new listing.
