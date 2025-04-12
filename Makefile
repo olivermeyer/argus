@@ -1,4 +1,4 @@
-IPV4_DNS=ec2-34-242-43-219.eu-west-1.compute.amazonaws.com
+IPV4_DNS=UPDATE_ME
 
 help:  ## Show this message
 	# From https://gist.github.com/prwhite/8168133#gistcomment-3785627
